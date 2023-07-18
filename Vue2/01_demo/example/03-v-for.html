@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-for 实例</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>v-for指令用法</h1>
+    <hr>
+    <div id="app">
+        <ul>
+            <li v-for="item in sortItems">
+                {{item}}
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                // items: [20, 23, 18, 65, 32, 19, 54, 56, 41]
+                items: [20, 23, 18, 65, 32, 19, 5, 56, 41]
+            },
+            // 使用Vue的computed:属性
+            computed: {
+                // items: function () {
+                sortItems: function () {
+                    return this.items.sort(sortNumber)
+                }
+            }
+        })
+        function sortNumber(a, b) {
+            return a - b
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-for 对象循环输出</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>v-for指令用法</h1>
+    <hr>
+    <div id="app">
+        <!-- 在模板中输出 -->
+        <ul>
+            <li v-for="(student,index) in sortStudents">
+                {{index}} : {{student.name}} - {{student.age}}
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                // 定义个数组，数组里边是对象数据
+                students: [
+                    { name: 'ich', age: 25 },
+                    { name: 'du', age: 24 },
+                    { name: 'icebear', age: 18 },
+                    { name: 'panda', age: 17 }
+                ]
+            },
+            computed: {
+                // 有了数组的排序方法，在computed中进行调用排序
+                sortStudents: function () {
+                    // 以 age 进行排序
+                    return sortByKey(this.students, 'age');
+                }
+            }
+        })
+        //数组对象方法排序:
+        function sortByKey(array, key) {
+            return array.sort(function (a, b) {
+                var x = a[key];
+                var y = b[key];
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            });
+        }
+    </script>
+</body>
+
+</html>

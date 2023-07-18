@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内部指令 v-if&v-else&v-show</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>v-if 判断是否加载</h1>
+    <hr>
+    <div id="app">
+        <!-- 当 isLogin 为true时，网页就会显示：你好：ich，如果为false时，就显示请登录后操作 -->
+        <div v-if="isLogin">你好，ich</div>
+        <div v-else>请登录后操作</div>
+        <!-- 当 isn 为true时，下面div就会显示，如果为false时，就隐藏下面div -->
+        <div v-show="isn">为真显示，假则隐藏</div>
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                // 在vue的data里定义了isLogin的值
+                // isLogin: false,
+                isLogin: true,
+                // 在vue的data里定义了isn的值
+                // isn:false
+                isn:true
+            }
+        })
+    </script>
+</body>
+
+</html>
