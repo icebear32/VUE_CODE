@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-model 实例</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+<body>
+    <h1>v-model 实例 - 文本框、文本域的绑定</h1>
+    <hr>
+    <div id="app">
+        <h3>文本框的数据绑定</h3>
+        <p>原始文本信息：{{message}}</p>
+        <p>原始文本信息(lazy)：{{message1}}</p>
+        <p>原始文本信息(number)：{{message2}}</p>
+        <p>原始文本信息(trim)：{{message3}}</p>
+        <p>v-model：<input type="text" v-model="message"></p>
+        <!-- 鼠标离开文本框才改变文本 -->
+        <p>v-model.lazy：<input type="text" v-model.lazy="message1"></p>
+        <!-- 文本必须是数字 -->
+        <p>v-model.number：<input type="text" v-model.number="message2"></p>
+        <!-- 去本去空格 -->
+        <p>v-model.trim<input type="text" v-model.trim="message3"></p>
+        <hr>
+        <h3>文本域的数据绑定</h3>
+        <p>原始文本信息：{{message4}}</p>
+        <textarea cols="30" rows="10" v-model="message4"></textarea>
+    </div>
+
+    <script type="text/javascript">
+        var app=new Vue({
+            el:'#app',
+            data:{
+                message:'hello Vue!',
+                message1:'hello Vue1!',
+                message2:'hello Vue2!',
+                message3:'hello Vue3!',
+                message4:'hello Vue4!'
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-model 实例</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>v-model 实例 - 单选框、多选框的绑定</h1>
+    <hr>
+    <div id="app">
+        <h3>多选框绑定一个值</h3>
+        <p>原始文本信息：{{isTrue}}</p>
+        <input type="checkbox" id="isTrue" v-model="isTrue">
+        <label for="isTrue">{{isTrue}}</label>
+        <hr>
+        <h3>多选框绑定数组</h3>
+        <p>
+            <input type="checkbox" id="ich" value="ich" v-model="web_names">
+            <label for="isTrue">ich</label>
+            <input type="checkbox" id="du" value="du" v-model="web_names">
+            <label for="isTrue">du</label>
+            <input type="checkbox" id="icebear" value="icebear" v-model="web_names">
+            <label for="isTrue">icebear</label>
+            <input type="checkbox" id="panda" value="panda" v-model="web_names">
+            <label for="isTrue">panda</label>
+        </p>
+        <p>{{web_names}}</p>
+        <hr>
+        <h3>单选框的绑定</h3>
+        <p>
+            <input type="radio" id="one" value="男" v-model="sex">
+            <label for="one">男</label>
+            <input type="radio" id="two" value="女" v-model="sex">
+            <label for="two">女</label>
+        <p>你选择的性别是：{{sex}}</p>
+        </p>
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                isTrue: true,
+                web_names: [],
+                sex: '男'
+            }
+        })
+    </script>
+</body>
+
+</html>
