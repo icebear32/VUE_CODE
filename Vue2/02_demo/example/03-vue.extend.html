@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.extend 构造器的延伸</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Vue.extend 构造器的延伸</h1>
+    <hr>
+    <!-- 自定义标签 -->
+    <author></author>
+    <!-- div标签  id -->
+    <div id="author"></div>
+
+    <script type="text/javascript">
+        // 作一个构造器
+        var authorURL = Vue.extend({
+            // 模板
+            template: "<p><a :href='authorURL'>{{authorName}}</a></p>",
+            data: function () {
+                return {
+                    authorName: 'ich',
+                    authorURL: 'https://www.baidu.com'
+                }
+            }
+        })
+
+        // 扩展实例构造器是需要挂载的，进行挂载
+        new authorURL().$mount("author")
+        // 通过HTML标签上的id或者class来生成扩展实例构造器，挂载到普通标签上，
+        new authorURL().$mount("#author")
+    </script>
+</body>
+
+</html>
