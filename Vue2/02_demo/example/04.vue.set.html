@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.set 全局操作</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Vue.set 全局操作</h1>
+    <hr>
+    <div id="app">
+        {{count}}
+        <p><button onclick="add()">ADD</button></p>
+    </div>
+
+    <script type="text/javascript">
+        function add() {
+            // 在外部改变数据的三种方法
+            // 第一种方式: 用Vue.set改变
+            Vue.set(outData, 'count', 2)
+            // 第二种方式: 用Vue对象的方法添加
+            // app.count++
+            // 第三种方式: 直接操作外部数据
+            // outData.count++
+        }
+        var outData = {
+            count: 1,
+            goods: 'car'
+        }
+        var app = new Vue({
+            el: '#app',
+            data: outData
+        })
+    </script>
+</body>
+
+</html>

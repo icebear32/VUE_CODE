@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template 制作模板</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>template 三种写法</h1>
+    <hr>
+    <div id="app">
+        {{message}}
+    </div>
+    <!-- 
+        写在template标签里的模板
+        像是在写HTML代码
+     -->
+    <template id="dd2">
+        <h2 style="color:red">我是 Template 标签模板</h2>
+    </template>
+
+    <!-- 
+        写在script标签里的模板
+        这种写模板的方法，可以让模板文件从外部引入
+     -->
+    <script type="x-template" id="dd3">
+        <h2 style="color:red">我是 Script 标签模板</h2>
+    </script>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'hello Vue!'
+            },
+            // 直接在构造器里的template选项后边编写建模板 - 适合很小量的模板  
+            // template: `
+            //     <h2 style="color:red">我是选项模板</h2>
+            // `,
+
+            // 挂 Template标签模板
+            // template: '#dd2'
+
+            // 挂 Script 标签模板
+            template: '#dd3'
+        })
+    </script>
+</body>
+
+</html>

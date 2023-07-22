@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.set 全局操作</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Vue.set 全局操作</h1>
+    <hr>
+    <div id="app">
+        <ul>
+            <li v-for="item in arr">{{item}}</li>
+        </ul>
+        <p><button onclick="add()">ADD</button></p>
+        <hr>
+        <ol>
+            <li v-for="item in arr1">{{item}}</li>
+        </ol>
+        <p><button onclick="add1()">ADD</button></p>
+    </div>
+
+    <script type="text/javascript">
+        // 用 Vue 对象的方法添加要改变的 li 内容
+        function add() {
+            console.log("add 已经执行了");
+            app.arr[1] = 'ddd'
+        }
+        //  用 Vue.set 改变 li 内容
+        function add1() {
+            console.log("add1 已经执行了");
+            Vue.set(app.arr1, 1, 'ddd');
+        }
+        var outData = {
+            arr: ['111', '222', '333'],
+            arr1: ['aaa', 'bbb', 'ccc']
+        }
+        var app = new Vue({
+            el: '#app',
+            data: outData
+        })
+    </script>
+</body>
+
+</html>
