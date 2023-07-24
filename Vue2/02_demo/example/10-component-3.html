@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component 父子组件关系</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Component 父子组件关系</h1>
+    <hr>
+    <div id="app">
+        <!-- 3.html中引用 -->
+        <panda></panda>
+    </div>
+
+    <script type="text/javascript">
+        // 1. 先声明一个对象,对象里就是组件的内容
+        var city = {
+            template: `<div style="color:green">siChaun of China!</div>`
+        }
+        var pandaComponent = {
+            // 2. 声明好对象后在构造器里引用
+            template: `
+            <div>
+                <p>panda from China!</p>
+                <city></city>
+            </div>
+            `,
+            components: {
+                "city": city
+            }
+        }
+
+        var app = new Vue({
+            el: '#app',
+            components: {
+                "panda": pandaComponent
+            }
+        })
+    </script>
+</body>
+
+</html>

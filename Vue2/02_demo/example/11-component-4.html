@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component 标签</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Component 标签</h1>
+    <hr>
+    <div id="app">
+        <!-- 我们在html里插入component标签，并绑定who数据，根据who的值不同，调用不同的组件 -->
+        <component v-bind:is="who"></component>
+        <!-- 4.给页面加个按钮，每点以下更换一个组件 -->
+        <button @click="changeConponent">changeConponent</button>
+    </div>
+
+    <script type="text/javascript">
+        // 1.先在构造器外部定义三个不同的组件，分别是componentA,componentB和componentC
+        var componentA = {
+            template: `<div style="color:red">I'm componentA.</div>`
+        }
+        var componentB = {
+            template: `<div style="color:green">I'm componentB.</div>`
+        }
+        var componentC = {
+            template: `<div style="color:blue">I'm componentC.</div>`
+        }
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                who: 'componentA'
+            },
+            // 2.在构造器的components选项里加入这三个组件
+            components: {
+                "componentA": componentA,
+                "componentB": componentB,
+                "componentC": componentC
+            },
+            methods: {
+                changeConponent: function () {
+                    if (this.who == "componentA") {
+                        this.who = "componentB"
+                    } else if (this.who == "componentB") {
+                        this.who = "componentC"
+                    } else {
+                        this.who = "componentA"
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

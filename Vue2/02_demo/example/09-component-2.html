@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component 组件 props 属性设置</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Component 组件 props 属性设置</h1>
+    <hr>
+    <div id="app">
+        <!-- 可以动态改变 here -->
+        <!-- <panda here="四川"></panda> -->
+        <!-- <panda here="China"></panda> -->
+
+        <!-- 属性中带 “-” 的处理方式 -->
+        <!-- <panda from-here="China"></panda> -->
+
+        <!-- 在构造器里向组件中传值 -->
+        <panda v-bind:from-here="message"></panda>
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                // message: '四川'
+                message: 'China'
+            },
+            components: {
+                "panda": {
+                    // 在组件的模板里读出属性值只需要用插值的形式，例如{{ here }}
+                    // template: `<div style="color:green">panda from {{here}}</div>`,
+                    // 定义属性需要用props选项，加上数组形式的属性名称
+                    // props: ['here']
+
+                    // 属性中带 “-” 的处理方式
+                    // from-here 是错误的
+                    // template: `<div style="color:green">panda from {{from-here}}</div>`,
+                    // props: ['from-here']
+                    // 正确方式：小驼峰式写法 fromHere
+                    template: `<div style="color:green">panda from {{fromHere}}</div>`,
+                    props: ['fromHere']
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
