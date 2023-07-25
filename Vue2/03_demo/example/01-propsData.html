@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>propsData Option 全局扩展的数据传递</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>propsData Option 全局扩展的数据传递</h1>
+    <hr>
+    <header></header>
+
+    <script type="text/javascript">
+        // 扩展标签
+        var header_a = Vue.extend({
+            // 接收值 a
+            // 3.用插值的形式写入模板
+            template: `<p>{{message}}-{{a}}</p>`,
+            data: function () {
+                return {
+                    message: 'Hello,I am header!'
+                }
+            },
+            // 2.在全局扩展里加入 props 进行接收
+            props: ['a']
+        })
+
+        // 挂载
+        // 用 propsData 传一个 a 值
+        // 1.传递时用 propsData 进行传递
+        new header_a({ propsData: { a: 12 } }).$mount('header')
+    </script>
+</body>
+
+</html>

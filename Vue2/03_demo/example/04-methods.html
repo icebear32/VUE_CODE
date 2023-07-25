@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methods Option 方法选项</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Methods Option 方法选项</h1>
+    <hr>
+    <h2>native 给组件绑定构造器里的原生事件</h2>
+    <div id="app">
+        {{a}}
+        <p><btn @click="add(3)">ADD-1</btn></p>
+        <!-- 3.用.native修饰器来调用构造器里的add方法 -->
+        <p><btn @click.native="add(3)">ADD-.native</btn></p>
+    </div>
+    <hr>
+    <h2>作用域外部调用构造器里的方法</h2>
+    <!-- 下面的会报错，没有找到 add方法 -->
+    <!-- <button onclick="add(3)">外部 ADD-1</button> -->
+    <button onclick="app.add(5)">外部 ADD-2</button>
+    <script type="text/javascript">
+        // 1.声明btn对象
+        var btn = {
+            template: `<button>组件Add</button>`
+        }
+        var app = new Vue({
+            el: '#app',
+            data: {
+                a: 1
+            },
+            // 2.在构造器里声明
+            components: {
+                "btn": btn
+            },
+            methods: {
+                add: function (num) {
+                    if (num != '') {
+                        this.a += num
+                    } else {
+                        this.a++
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

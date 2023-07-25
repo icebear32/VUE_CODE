@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methods Option 方法选项</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Methods Option 方法选项</h1>
+    <hr>
+    <div id="app">
+        {{a}}
+        <!-- 2.调用方法时直接传递，传递 数字2 这个参数，在button上的 add方法 中的 括号 写 -->
+        <p><button @click="add(2,$event)">ADD</button></p>
+    </div>
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                a: 1
+            },
+            methods: {
+                // 1.在methods的方法中进行声明 - 给 add 方法加上一个 num 参数
+                add: function (num, event) {
+                    if (num != '') {
+                        this.a += num
+                    } else {
+                        this.a++
+                    }
+                    // 打印 event 对象，包含了大部分鼠标事件的属性
+                    console.log(event);
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
