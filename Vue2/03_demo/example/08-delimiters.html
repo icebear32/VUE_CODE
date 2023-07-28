@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>delimiters Option</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>delimiters Option</h1>
+    <hr>
+    <div id="app">
+        <!-- 原本的插值形式失去作用 -->
+        {{message}}
+        <br>
+        <!-- ${message} 的插值形式可以显示内容 -->
+        ${message}
+    </div>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'hello Vue!'
+            },
+            // 将插值形式就变成了${}
+            delimiters: ['${', '}']
+        })
+    </script>
+</body>
+
+</html>

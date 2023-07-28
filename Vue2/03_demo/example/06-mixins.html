@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixins Option</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Mixins Option</h1>
+    <hr>
+    <div id="app">
+        {{num}}
+        <p><button @click="add">ADD</button></p>
+    </div>
+
+    <script type="text/javascript">
+        // 额外临时加入时，用于显示日志
+        var addConsole = {
+            updated: function () {
+                console.log("数据放生变化,变化成" + this.num + ".");
+            }
+        }
+
+        Vue.mixin({
+            updated: function () {
+                console.log('我是全局被混入的');
+            }
+        })
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                num: 1
+            },
+            methods: {
+                add: function () {
+                    this.num++
+                }
+            },
+            updated: function () {
+                console.log('我是vue原生的updated');
+            },
+            // 混入
+            mixins: [addConsole]
+        })
+    </script>
+</body>
+
+</html>

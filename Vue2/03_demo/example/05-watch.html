@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Option 监控数据</title>
+    <script src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Watch Option 监控数据</h1>
+    <hr>
+    <div id="app">
+        <p>今日温度：{{temperature}}°</p>
+        <p>穿衣建议：{{getDressed}}°</p>
+        <p>
+            <button @click="rise">温度升高</button>
+            <button @click="drop">温度降低</button>
+        </p>
+    </div>
+
+    <script type="text/javascript">
+        // 定义数组
+        getDressedArr = ['T恤短袖', '夹克长裙', '棉衣羽绒服']
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                temperature: 14,
+                getDressed: '夹克长裙'
+            },
+            methods: {
+                rise: function () {
+                    this.temperature += 5
+                },
+                drop: function () {
+                    this.temperature -= 5
+                }
+            },
+            // 通过温度升高或者降低使得穿衣变化
+            // watch: {
+            //     temperature: function (newVal, oldVal) {
+            //         if (newVal >= 26) {
+            //             // this.getDressed = 'T恤短袖'
+            //             this.getDressed = getDressedArr[0]
+            //         } else if (newVal < 26 && newVal > 0) {
+            //             // this.getDressed = '夹克长裙'
+            //             this.getDressed = getDressedArr[1]
+            //         } else {
+            //             // this.getDressed = '棉衣羽绒服'
+            //             this.getDressed = getDressedArr[2]
+            //         }
+            //     }
+            // }
+        })
+
+        // 用实例属性的形式来写watch监控，把watch写在构造器的外部
+        // 这样的好处就是降低程序的耦合度，使程序变的灵活
+        app.$watch('temperature', function (newVal, oldVal) {
+            if (newVal >= 26) {
+                // this.getDressed = 'T恤短袖'
+                this.getDressed = getDressedArr[0]
+            } else if (newVal < 26 && newVal > 0) {
+                // this.getDressed = '夹克长裙'
+                this.getDressed = getDressedArr[1]
+            } else {
+                // this.getDressed = '棉衣羽绒服'
+                this.getDressed = getDressedArr[2]
+            }
+        })
+    </script>
+</body>
+
+</html>
