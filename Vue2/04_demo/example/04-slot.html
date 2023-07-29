@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slot content extend Demo</title>
+    <script type="text/javascript" src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>Slot content extend Demo</h1>
+    <hr>
+    <div id="app">
+        <!-- 传值 -->
+        <ich>
+            <span slot="bolgUrl">{{ichData.bolgUrl}}</span>
+            <span slot="netName">{{ichData.netName}}</span>
+            <span slot="skill">{{ichData.skill}}</span>
+        </ich>
+    </div>
+
+    <!-- 在模板里面接收值，接收 slot 标签 -->
+    <template id="tep">
+        <div>
+            <p>博客地址：<slot name="bolgUrl"></slot></p>
+            <p>网名：<slot name="netName"></slot></p>
+            <p>技术类型：<slot name="skill"></slot></p>
+        </div>
+    </template>
+
+    <script type="text/javascript">
+        var ich = {
+            template: "#tep"
+        }
+        var app = new Vue({
+            el: '#app',
+            data: {
+                ichData: {
+                    bolgUrl: 'https://github.com/icebear32',
+                    netName: 'ich',
+                    skill: 'web前端'
+                }
+            },
+            components: {
+                "ich": ich
+            }
+        })
+    </script>
+</body>
+
+</html>

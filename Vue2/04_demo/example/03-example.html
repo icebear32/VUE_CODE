@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>example event Demo</title>
+    <script type="text/javascript" src="../assets/js/vue.js"></script>
+</head>
+
+<body>
+    <h1>example event Demo</h1>
+    <hr>
+    <div id="app">
+        {{num}}
+        <p><button @click="add">ADD</button></p>
+    </div>
+    <p><button onclick="reduce()">reduce</button></p>
+    <p><button onclick="reduceOnce()">reduceOnce</button></p>
+    <p><button onclick="off()">off</button></p>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                num: 1
+            },
+            methods: {
+                add: function () {
+                    this.num++
+                }
+            }
+        })
+
+        // $on 在构造器外部添加事件
+        app.$on("reduce", function () {
+            console.log("执行了 reduce 方法");
+            this.num--
+        })
+
+        // 按钮在作用域外部，可以利用$emit来执行
+        function reduce() {
+            app.$emit('reduce')
+        }
+
+        // $once执行一次的事件
+        app.$once("reduceOnce", function () {
+            console.log("只执行一次 reduceOnce 方法");
+            this.num--
+        })
+
+        function reduceOnce() {
+            app.$emit('reduceOnce')
+        }
+
+        //关闭事件
+        function off() {
+            app.$off('reduce');
+        }
+    </script>
+</body>
+
+</html>
