@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>靓仔餐馆</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		Vue.createApp({
+			data(){
+				return {
+					content:"",
+					setMeal:'火锅套餐 烧烤套餐 九大簋餐 糖水套餐',
+					isSHowMeal:false
+				}
+			},
+			methods:{
+				welcomeBtnClick(){
+					// alert('1111')
+					this.content="欢迎你的光临，贵宾一位！"
+				},
+				byeBtnClick(){
+					// alert('2222')
+					this.content="欢迎下次光临，下次购买套餐8折优惠"
+				},
+				showOrHideBtnClick(){
+					this.isSHowMeal = !this.isSHowMeal
+				}
+			},
+			template:`
+				<div>
+					<div>{{content}}</div>
+					<button v-on:click="welcomeBtnClick">有顾客来</button>&nbsp;
+					<button v-on:click="byeBtnClick">顾客离开</button>
+					<div>
+						<div v-if="isSHowMeal">{{setMeal}}</div>
+						<button v-on:click="showOrHideBtnClick">显示/隐藏套餐</button>
+					</div>
+				</div>
+			`
+		}).mount("#app")
+	</script>
+</html>

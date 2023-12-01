@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>厨师列表</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		// 声明 app 变量，方便以后进行复用
+		const app = Vue.createApp({
+			data(){
+				return{
+					list:[],
+					inputValue:''
+				}
+			},
+			methods:{
+				handleAddItem(){
+					this.list.push(this.inputValue)
+					this.inputValue=''
+				}
+			},
+			template:`
+				<div>
+					<my-title />
+					<input v-model="inputValue" />
+					<button  v-on:click="handleAddItem">增加厨师</button>
+					<ul>
+						<my-chushi
+							v-for="(item,index) of list"
+							v-bind:item="item"
+							v-bind:index="index"
+						/>
+					</ul>
+				</div>
+			`
+		})
+		//有了app变量，可以非常方便的自定义组件并使用
+		//创建 h1 标题的组件（静态组件）
+		app.component('my-title',{
+			template:'<h1 style="text-align:center">靓仔餐馆</h1>'
+		})
+		
+		//动态组件
+		app.component('my-chushi',{
+			//props，用于接受父组件传递过来的参数,然后动态显示出内容
+			//props是一个数组，可以接受多个值
+			props:['index','item'],
+			template:'<li>[{{index}}]{{item}}</li>'
+		})
+		
+		//声明 app 变量后，可以把 mount 部分独立开来
+		app.mount("#app")
+	</script>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>厨师列表</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		Vue.createApp({	//创建一个Vue实例	
+			data(){
+				return{
+					// 声明 list[] 数组
+					//list:['1-大厨','2-厨师','3-徒弟']
+					
+					list:[],
+					inputValue:''
+				}
+			},
+			methods:{
+				handleAddItem(){
+					//增加的厨师都是一样的，而我们最终的目的是能够自定义的增加厨师
+					// this.list.push('厨师')
+					this.list.push(this.inputValue)
+					this.inputValue=''
+				}
+			},
+			// 需要一个input输入框了.而且需要用v-model指令，进行绑定
+			template:`
+				<div>
+					<input v-model="inputValue" />
+					<button  v-on:click="handleAddItem">增加厨师</button>
+					<ul>
+						<li v-for="(item,index) of list">[{{index}}]{{item}}</li>
+					</ul>
+				</div>
+			`
+		}).mount("#app")
+	</script>
+</html>
