@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo17</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                listArray: ['HelloWorld', 'ich', 'du', 'ich&du'],
+            }
+        },
+        template: `
+            <h2>以下有错误</h2>
+            <ul>
+                <li 
+                    v-for="(item,index) in listArray" 
+                    :key="index+item"
+                    v-if="item != 'HelloWorld'"
+                >
+                [{{ index }}]{{ item }}
+                </li>
+            </ul>
+            <h2>错误改正后：HelloWorld被去除</h2>
+            <ul>
+                <div
+                    v-for="(item,index) in listArray" 
+                    :key="index+item"
+                >
+                    <li v-if="item != 'HelloWorld'">
+                        [{{ index }}]{{ item }}  
+                    </li>
+                </div>
+            </ul>
+            <h2>Vue 提供了 template 模版标签</h2>
+            <ul>
+                <template
+                    v-for="(item,index) in listArray" 
+                    :key="index+item"
+                >
+                    <li v-if="item != 'HelloWorld'">
+                        [{{ index }}]{{ item }}  
+                    </li>
+                </template>
+            </ul>
+            <span v-for="count in 99"> {{ count }} |</span>
+            
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

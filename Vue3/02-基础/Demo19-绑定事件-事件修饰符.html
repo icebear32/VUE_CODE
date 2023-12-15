@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo19</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                count: 0,
+                numbers: 0
+            }
+        },
+        methods: {
+            addCountClick() {
+                this.count ++
+                alert(0)
+            },
+            handleBtnClick1() {
+                alert(1)
+            },
+            addCountClick1() {
+                this.numbers += 10
+            },
+        },
+        template: `
+            <h2>.stop</h2>
+            <div @click="handleBtnClick1">
+                <div>目前数量 {{count}} .</div>
+                <button @click.stop="addCountClick">增加一位</button>
+            </div>
+            <h2>.self</h2>
+            <div @click.self="handleBtnClick1">
+                点击 div 自身
+                <div>目前数量 {{count}} .</div>
+                <button @click="addCountClick">增加一位</button>
+            </div>
+            <h2>不加 capture</h2>
+            <div @click="handleBtnClick1">
+                点击 div 自身
+                <div>目前数量 {{count}} .</div>
+                <button @click="addCountClick">增加一位</button>
+            </div>
+            <h2>加 capture</h2>
+            <div @click.capture="handleBtnClick1">
+                点击 div 自身
+                <div>目前数量 {{count}} .</div>
+                <button @click="addCountClick">增加一位</button>
+            </div>
+            <h2>once 修饰符</h2>
+            <div>
+                <div>目前数量 {{numbers}} .</div>
+                <button @click.once="addCountClick1">增加一位</button>
+            </div>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

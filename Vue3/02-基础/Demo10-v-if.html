@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo10</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                message: 'ichdu',
+            }
+        },
+        methods: {
+            handleItemClick() {
+                this.message = this.message === 'ich' ? 'du' : 'ich'
+            }
+        },
+        template: `
+            <h2 @click="handleItemClick" v-if="message=='ich'" class="one"> {{message}} </h2>
+            <h2 @click="handleItemClick" v-if="message=='du'" class="two"> {{message}} </h2>
+            <h2 @click="handleItemClick" v-if="message=='ichdu'" class="three"> {{message}} </h2>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+<style>
+    .one {
+        color: red;
+    }
+
+    .two {
+        color: green;
+    }
+
+    .three {
+        color: orange;
+    }
+</style>
+
+</html>

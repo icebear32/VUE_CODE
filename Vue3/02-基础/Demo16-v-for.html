@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo16</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        // 在 data 中声明一个数组，数组叫做 listArray
+        data() {
+            return {
+                listArray: ['ich', 'du', 'ich&du'],
+                // 在 data 中建立一个对象
+                listObject: {
+                    nameOne: 'ich',
+                    nameTwo: 'du',
+                    nameThree: 'ich du'
+                }
+            }
+        },
+        methods: {
+            handleChangeBtnClick() {
+                this.listArray.push('ich du')
+            }
+        },
+        // 在 template 中循环出这些数组，使用v-for
+        // 在 v-for 渲染数组时中还可以加入索引 index，也就是 数组的下标
+        template: `
+            <ul>
+                <li 
+                    v-for="(item,index) in listArray" 
+                    :key="index+item"
+                >
+                [{{ index }}]{{ item }}
+                </li>
+            </ul>
+
+            <button @click="handleChangeBtnClick">点击改变</button>
+
+            <ul>
+                <li 
+                    v-for="(value,key,index) in listObject" 
+                    :key="key"
+                >
+                [{{ index }}] {{ key }} : {{ value }}
+                </li>
+            </ul>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

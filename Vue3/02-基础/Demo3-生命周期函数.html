@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Demo3</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		// 生命周期函数 在 某一时刻 会 自动执行 的函数
+		const app = Vue.createApp({
+			data() {
+				return {
+					message: 'ich'
+				}
+			},
+			methods: {
+				handleItemClick() {
+					//手动触发，点击后执行
+					alert('手动触发，点击后执行')
+				}
+			},
+			// 自动执行
+			// mounted(){
+			// 	alert('mounted')
+			// },
+
+			// 在实例生成之前会自动执行的函数
+			beforeCreate() {
+				console.log('beforeCreate')
+			},
+
+			// 在实例生成之后会自动执行的函数
+			created() {
+				console.log('created')
+			},
+
+			// 在模板渲染完成之前执行的函数
+			beforeMount() {
+				console.log('beforeMount')
+			},
+
+			// 在模板渲染完成之后执行的函数
+			mounted() {
+				console.log('mounted')
+			},
+
+			template: "<h2 v-on:click='handleItemClick'>{{message}}</h2>"
+		})
+		const vm = app.mount("#app")
+	</script>
+
+</html>

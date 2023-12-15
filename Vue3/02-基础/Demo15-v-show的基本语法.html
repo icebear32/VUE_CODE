@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo15</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        // 在数据项中声明一个 show 的变量
+        data() {
+            return {
+                show: true
+                // show: false
+            }
+        },
+        template: `
+            <h2 v-show="show">ich</h2>
+            <h2 v-if="show">du</h2>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

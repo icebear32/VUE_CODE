@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo7</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                message: 'ich',
+                name: 'title'
+            }
+        },
+        methods: {
+            handleItemClick() {
+                alert('ich')
+            }
+        },
+        // template: `
+        //     <h2 
+        //         v-bind:title="message"
+        //         v-on:click="handleItemClick"
+        //     >
+        //     {{message}}
+        //     </h2>
+        // `
+        // v-on 和 v-bind 的简写
+        template: `
+            <h2 
+                :title="message"
+                @click="handleItemClick"
+            >
+            {{message}}
+            </h2>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

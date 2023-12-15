@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo13</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        // 声明 data 变量
+        data() {
+            return {
+                // 变量
+                classString: 'red',
+                // 对象 - 值为true代表绑定，值为false代表不绑定这个样式
+                // classObject: { red: true, background: true }
+                classObject: { red: false, background: false },
+                classArray: ['green', 'background', { red: true }]
+            };
+        },
+        // 用 bind 的形式进行绑定
+        template: `
+            <h2 :class="classString">ich</h2>
+            <h2 :class="classObject">du</h2>
+            <h2 :class="classArray">ich&du</h2>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+<style>
+    .red {
+        color: red !important;
+    }
+
+    .green {
+        color: green;
+    }
+
+    .background {
+        background-color: orange;
+    }
+</style>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo14</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                classArray: ['green', 'background', { red: true }],
+                styleString: 'color: blue;',
+                // 用对象的形式在 data 中编写 CSS 样式
+                styleObject: { color: 'red', background: 'yellow' }
+            };
+        },
+        // 有了子组件后，就可以在父组件的模板中进行使用
+        template: `
+            <h2 :class="classArray">ich&du</h2>
+            <sonCom class="green" />
+            <h2 style="color: orange;">行内样式</h2>
+            <h2 :style="styleString">绑定行内样式的形式</h2>
+            <h2 :style="styleObject">绑定行内样式的对象形式</h2>
+        `
+    })
+
+    // 编写一个子组件 SonCom
+    app.component('sonCom', {
+        template: `
+            <div>
+                <div>子组件</div>
+                <div>ich</div>
+            </div>
+        `
+        // <div class="green">子组件</div>
+    })
+
+    const vm = app.mount("#app")
+</script>
+<style>
+    .red {
+        color: red !important;
+    }
+
+    .green {
+        color: green;
+    }
+
+    .background {
+        background-color: orange;
+    }
+</style>
+
+</html>

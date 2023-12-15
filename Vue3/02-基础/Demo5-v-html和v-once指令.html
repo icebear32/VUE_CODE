@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Demo5</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		const app = Vue.createApp({
+			data() {
+				return {
+					message: '<i>ich</i>',
+                    count:5
+				}
+			},
+			methods: {
+				handleItemClick() {
+					this.message = this.message == 'ich' ? 'du' : 'ich'
+				}
+			},
+			template: `<h2 
+						v-on:click="handleItemClick" 
+						v-html="message"
+						v-once
+						></h2>`
+		})
+		const vm = app.mount("#app")
+	</script>
+</html>

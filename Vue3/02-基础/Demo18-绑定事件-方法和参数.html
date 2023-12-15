@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo18</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                count: 0
+            }
+        },
+        methods: {
+            // addCountClick() {
+            //     this.count++
+            // }
+            // addCountClick(event) {
+            //     this.count++
+            //     console.log(event.target);
+            // }
+            // 单参数传递
+            // addCountClick(num) {
+            //     this.count += num
+            // }
+            // 多参数传递
+            addCountClick(num, event) {
+                this.count += num
+                console.log(event.target);
+            },
+            handleBtnClick1() {
+                alert(1)
+            },
+            handleBtnClick2() {
+                alert(2)
+            },
+        },
+        template: `
+            <div>目前数量 {{count}} .</div>
+            <button @click="addCountClick(2, $event)">增加一位</button>
+            <br />
+            <button @click="handleBtnClick1(), handleBtnClick2()">调用两个方法</button>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

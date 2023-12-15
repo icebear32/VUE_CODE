@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Demo4</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		// 生命周期函数 在 某一时刻 会 自动执行 的函数
+		const app = Vue.createApp({
+			data() {
+				return {
+					message: 'ich'
+				}
+			},
+			methods: {
+				handleItemClick() {
+					//实现 message 的更新
+					// 程序运行后 每次点击 message 处的字体会判断是否与 ich 相同，相同则将字体改为 du ，不相同则为 ich
+					this.message = this.message == 'ich' ? 'du' : 'ich'
+				}
+			},
+			
+			// 当 data 中数据变化时，会立即执行的函数
+			beforeUpdate() {
+				console.log('beforeUpdate')
+				console.log(document.getElementById('app').innerHTML)
+			},
+			
+			// 当 data 中数据变化时，页面重新渲染完成后，会自动执行的函数
+			updated() {
+				console.log('updated')
+				console.log(document.getElementById('app').innerHTML)
+			},
+			
+			// 当 Vue 应用失效时，会自动执行的函数
+			beforeUnmount() {
+				console.log('beforeUnmount')
+				console.log(document.getElementById('app').innerHTML)
+			},
+			
+			// 当 Vue 应用失效时，且 DOM 完全销毁之后，会自动执行的函数
+			unmounted() {
+				console.log('unmounted')
+				console.log(document.getElementById('app').innerHTML)
+			},
+
+			template: "<h2 v-on:click='handleItemClick'>{{message}}</h2>"
+		})
+		const vm = app.mount("#app")
+	</script>
+
+</html>

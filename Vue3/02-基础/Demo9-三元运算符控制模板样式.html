@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo8</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                message: 'ich',
+            }
+        },
+        methods: {
+            handleItemClick() {
+                this.message = this.message === 'ich' ? 'du' : 'ich'
+            }
+        },
+        // 绑定class的形式
+        template: `
+            <h2 
+                :class="message=='ich'?'one':'two'"
+                @click="handleItemClick"
+            > {{message}} </h2>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+<style>
+    .one {
+        color: red;
+    }
+
+    .two {
+        color: green;
+    }
+</style>
+
+</html>

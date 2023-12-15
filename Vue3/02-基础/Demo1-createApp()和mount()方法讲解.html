@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Demo1</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		// Vue 就是Vue这个框架
+		// Vue.createApp()的意思就是创建一个Vue的应用
+		// const app = Vue.createApp({})
+		
+		// createApp()接受一个对象形式的参数{},这个对象就是告诉Vue应该如何展现我们最外层的组件
+		// 里面含有变量、方法等
+		const app = Vue.createApp({
+			data(){
+				return{
+					message:'ygh'	// 1.在这里定义了数据，也就是`model`数据
+				}
+			},
+			template:"<h2>{{message}}</h2>" // 2.在这里定义了模板，也就是`view`，
+			// 定义后的自动关联，就叫做`vm`，viewModel数据视图连接层。
+		})
+		
+		// mount()方法就是挂载到某个 Html 的 DOM 节点上，它接受一个字符串型参数,
+		// 参数可以使用CSS选择器，一般都是ID选择器的形式，指定挂载的DOM元素
+		// app.mount("#app")
+		
+		// 使用mount()方法时，就会返回根组件
+		// 声明一个变量来获取根组件，并打印出来
+		const vm = app.mount("#app")
+		console.log(vm)	//查看根组件
+	</script>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo20</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+
+            };
+        },
+        methods: {
+            handleKeyDown() {
+                console.log('keydown...');
+            },
+            handleClick() {
+                alert('click')
+            }
+        },
+        template: `
+            <div>
+                <h2>按键触发方法</h2>
+                <input @keydown="handleKeyDown" />
+                <h2>enter 按键触发方法</h2>
+                <input @keydown.enter="handleKeyDown" />
+                <h2>鼠标右键 触发方法</h2>
+                <div @click.right="handleClick">ich&du</div>
+            </div>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

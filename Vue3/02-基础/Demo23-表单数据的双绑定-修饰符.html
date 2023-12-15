@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo23</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                // 在 data 中声明一个 message 变量，值为空
+                message: '',
+                str: '',
+                str1: 1,
+                str2: '',
+                str3: 'ich',
+                str4: 'ich'
+            };
+        },
+        // 在模板中写一个<input />并和message进行双向数据绑定
+        template: `
+            <h2>lazy</h2>
+            <div>
+                {{message}}
+                <input v-model.lazy="message" />
+            </div>
+            <div>
+                {{typeof str}}
+                <input v-model="str" />
+            </div>
+            <div>
+                {{typeof str1}}
+                <input v-model="str1" />
+            </div>
+            <h2>number</h2>
+            <div>
+                {{typeof str2}}
+                <input v-model.number="str2" />
+            </div>
+            <h2>没加 trim</h2>
+            <div>
+                {{str3}}
+                <input v-model="str3" />
+            </div>
+            <h2>加入 trim</h2>
+            <div>
+                {{str4}}
+                <input v-model.trim="str4" />
+            </div>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

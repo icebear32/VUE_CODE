@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo8</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                message: 'ich',
+                // 在 data 中定义了一个 name 的变量，值是一个字符串
+                name: 'title1',
+                // 在 data 中声明一个 event 的变量，给一个 click，然后用同样的方法实现事件动态绑定
+                event: 'click'
+            }
+        },
+        methods: {
+            handleItemClick() {
+                alert('ich')
+            },
+            handleButton(e) {
+                // e.preventDefault()
+                alert('ich')
+            }
+        },
+        // 在绑定属性时使用[]方括号加上data中变量名的形式
+        template: `
+            <h2 
+                :[name]="message"
+                @[event]="handleItemClick"
+            >
+            {{message}}
+            </h2>
+
+            <form 
+                action="https://www.baidu.com" 
+                @click.prevent="handleButton">
+                <button type='submit'>submit</button>
+            </form>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

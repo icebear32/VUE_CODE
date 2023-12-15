@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Demo6</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		const app = Vue.createApp({
+			data() {
+				return {
+					message: 'ich',
+                    count:5
+				}
+			},
+			template: `
+				<h1> {{'↓ 插值表达式 ↓'}} </h1>
+				<h2> {{count}} </h2>
+				<h2> {{count>2?'大':'小'}} </h2>
+				<h2> {{1+2}} </h2>
+				<h2> {{'ich'+'du'}} </h2>
+				<h1> {{'↓ v-bind 指令 ↓'}} </h1>
+				<h2 v-bind:title="message"> {{message}} </h2>
+				`
+		})
+		const vm = app.mount("#app")
+	</script>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo21</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                name: '',
+                // data 中新声明一个变量 checked
+                checked: false,
+                // 先定义一个变量，这个变量是一个空数组
+                names: [],
+                age: ''
+            };
+        },
+        // 在模板中进行双向数据绑定
+        template: `
+            <div>
+                <div>{{name}}</div>
+                <div><input v-model="name" /></div>
+                <div><textarea v-model="name" /></div>
+                <div>{{checked}}<input type="checkbox" v-model="checked" /></div>
+            </div>
+            <h2>checkbox</h2>
+            <div>
+                {{names}}
+                ich<input type="checkbox" v-model="names" value="ich" />
+                du<input type="checkbox" v-model="names" value="du" />
+                ich&du<input type="checkbox" v-model="names" value="ich&du" />
+            </div>
+            <h2>radio</h2>
+            <div>
+                {{age}}
+                18<input type="radio" v-model="age" value="18" />
+                19<input type="radio" v-model="age" value="19" />
+                20<input type="radio" v-model="age" value="20" />
+            </div>
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>
