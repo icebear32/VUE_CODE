@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo4</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    // （2）父组件调用ich子组件，hello 是一个定义在 data 中的函数，然后用动态参数的形式进行调用
+    const app = Vue.createApp({
+        data() {
+            return {
+                name1: 123,
+                // 定义函数
+                hello: () => {
+                    alert('hi,du')
+                }
+            };
+        },
+        template: `
+            <h2>ich.com</h2>
+            <son name="123" />
+            <du v-bind:name1="name1" />
+            <ich v-bind:hello="hello" />
+        `
+    })
+
+    // 静态传值
+    app.component('Son', {
+        props: ['name'],
+        template: `<div>{{typeof name}} div</div>`
+    })
+
+    // 动态传值
+    app.component('du', {
+        props: ['name1'],
+        template: `<div>{{typeof name1}} div</div>`
+    })
+
+    // （1）编写 ich 的全局子组件，点击触发相应函数
+    app.component('ich', {
+        props: ['hello'],
+        methods: {
+            handleClick() {
+                alert("hello,ich")
+                this.hello()
+            }
+        },
+        template: `<div @click="this.handleClick">打招呼</div>`
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

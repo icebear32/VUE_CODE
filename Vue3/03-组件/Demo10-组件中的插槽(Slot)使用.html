@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo9</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    // (2)有了插槽后就可以在使用组件的时候直接传递值
+    const app = Vue.createApp({
+        template: `
+            <h2>欢迎光临-请点餐</h2>
+            <cook>
+                <span style="color:red;">厨师长</span>
+            </cook>
+            <cook></cook>
+        `
+    })
+
+    // (1)先编写一个全局的组件 Cook，设置插槽的默认值
+    app.component('Cook', {
+        template: `
+            <div>
+                你选择了<slot> <span style="color:green;">厨师</span> </slot>为你服务。
+            </div>
+        `
+    })
+
+    app.component('Dinner',{
+        template:`
+            <div>
+                <div>1.番茄炒蛋</div>
+                <div>2.小炒肉</div>
+                <div>3.鲮鱼汤</div>
+            </div>
+        `
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

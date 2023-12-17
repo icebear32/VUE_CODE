@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo8</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                counter: 0,
+                counter1: 0,
+                counter2: 0,
+                counter3: 0
+            };
+        },
+        // (1) 在父组件里编写一个方法 handleAdCounter，可以改变 counter 数据的值
+        methods: {
+            handleAddCounter() {
+                this.counter += 1
+            },
+            // (二) 在父组件中接受这个参数param 
+            handleAddCounter1(param) {
+                console.log(param);
+                this.counter1 += param
+            },
+            handleAddCounter2(param) {
+                console.log(param);
+                this.counter2 += param
+            },
+            handleAddCounter3(param) {
+                console.log(param);
+                this.counter3 += param
+            }
+        },
+        // (4) add就是响应事件，在父组件的模板 template 中，添加一个add响应事件，然后响应事件再调用方法 handleAdCounter
+        template: `
+            <h2>ich.com</h2>
+            <counter :counter="counter" @add="handleAddCounter" />
+            <br />
+            <h3>子组件向父组件传递参数</h3>
+            <counter1 :counter1="counter1" @add1="handleAddCounter1" />
+            <br />
+            <h3>传递参数的另一种方法</h3>
+            <counter2 :counter2="counter2" @add2="handleAddCounter2" />
+            <br />
+            <h3>对传递值的校验</h3>
+            <counter3 :counter3="counter3" @add3="handleAddCounter3" />
+        `
+    })
+
+    app.component('Counter', {
+        props: ['counter'],
+        // (5) 调用的add方法，要 emits 进行声明,Vue对子组件调用父组件时的一种约束，就是调用前需要声明，否则就会报出警告
+        emits: ['add'],
+        methods: {
+            // (3) 用 $emit 调用父组件的响应事件add
+            handleClick() {
+                this.$emit('add')
+            }
+        },
+        // (2) 在子组件的模板 template 中编写一个 click 事件,子组件调用的并不是父组件中的方法，而是子组件中的方法
+        template: `
+            {{counter}}<button @click="handleClick">增加数量</button>
+        `
+    })
+
+    // 子组件向父组件传递参数
+    app.component('Counter1', {
+        props: ['counter1'],
+        emits: ['add1'],
+        methods: {
+            // (一)设置子组件要传递的值
+            handleClick1() {
+                this.$emit('add1', 2)
+            }
+        },
+        template: `
+            {{counter1}}<button @click="handleClick1">(1)增加数量</button>
+        `
+    })
+
+    // 传递参数的另一种方法
+    app.component('Counter2', {
+        props: ['counter2'],
+        emits: ['add2'],
+        methods: {
+            handleClick2() {
+                this.$emit('add2', this.counter2 + 3)
+            }
+        },
+        template: `
+            {{counter2}}<button @click="handleClick2">(2)增加数量</button>
+        `
+    })
+
+    // 对传递值的校验
+    app.component('Counter3', {
+        props: ['counter3'],
+        emits: {
+            add3: (value) => {
+                return value < 20 ? true : false
+            }
+        },
+        methods: {
+            handleClick3() {
+                this.$emit('add3', this.counter3 + 3)
+            }
+        },
+        template: `
+            {{counter3}}<button @click="handleClick3">(3)增加数量</button>
+        `
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

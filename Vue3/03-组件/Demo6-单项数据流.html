@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo6</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                counter: 0
+            };
+        },
+        template: `
+            <h2>ich.com</h2>
+            <counter :counter="counter" />
+            <counter :counter="counter" />
+            <counter :counter="counter" />
+        `
+    })
+
+    app.component('Counter', {
+        props: ['counter'],
+        // 在组件内的数据项中声明一个变量，把父组件传递过来的变量赋值给内部变量，然后可以随意修改
+        data() {
+            return {
+                newCounter: this.counter,
+            };
+        },
+        template: `{{newCounter}}<button @click="newCounter+=1">增加数量</button>`
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

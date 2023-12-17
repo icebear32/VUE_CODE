@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo2</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    // (1)创建局部组件
+    const counter = {
+        data() {
+            return {
+                count: 0,
+            };
+        },
+        template: `
+            <div>
+                {{count}}
+                <button @click="count++">增加1</button>
+            </div>
+        `
+    }
+
+    const ich = {
+        template: `<h2>ich</h2>`
+    }
+
+    const app = Vue.createApp({
+        // (2)局部组件的注册
+        components: { 
+            counter,
+            // 上面的是简写方法，正确写法如下，
+            // counter: counter
+
+            // 其实就是给组件起个名字，也可以叫别的名字，比如改成 du
+            du: ich
+        },
+        template: `
+            <counter />
+            <du />
+        `
+    })
+    const vm = app.mount("#app")
+</script>
+
+</html>

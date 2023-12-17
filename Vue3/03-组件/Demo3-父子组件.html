@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo3</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    // 父组件
+    const app = Vue.createApp({
+        // (一)在 data 中声明一个 name1 属性，然后赋值为 du
+        data() {
+            return {
+                name1: 'du',
+            };
+        },
+
+        // (1)调用子组件时，通过属性 name 传递一个`ich`的文字
+        // (二)在 template 中绑定(v-bind:name1)这个 name1 属性，这样值就不是静态的了，而是动态值
+        template: `
+            <h2>ich.com</h2>
+            <son name="ich" />
+            <du v-bind:name1="name1">
+        `
+    })
+
+    // 子组件
+    app.component('Son', {
+        // template: `<div>Son div</div>`
+
+        // (2)用 props 在子组件中接受传递的值
+        props: ['name'],
+        // (3)用插值表达式（双花括号`{{name}}`）的形式进行打印出来
+        template: `<div>{{name}} div</div>`
+    })
+
+    // (三)创建子组件
+    app.component('du', {
+        props: ['name1'],
+        template: `<div>{{name1}} div</div>`
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

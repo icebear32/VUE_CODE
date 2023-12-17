@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo7</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        template: `
+            <h2>ich.com</h2>
+            <hello msg="ich" />
+            <red style="color:red;" />
+            <inh style="color:red;" />
+            <hi style="color:green;" />
+            <hi1 style="color:green;" />
+            <hi2 msg="ich" style="color:blue;" />
+            <cs msg="du" style="color:red;" />
+        `
+    })
+
+    // 不接受父组件的参数
+    app.component('Hello', {
+        props: ['msg'],
+        template: `<h3>Hello World!</h3>`
+    })
+
+    // 父组件直接复制属性给子组件
+    app.component('red', {
+        template: `<h3>red word</h3>`
+    })
+
+    // inheritAttrs 属性
+    // 不想接受参数，也不想让 Non-props 属性起作用，可以使用 inheritAttrs 属性设置为 false
+    app.component('inh', {
+        inheritAttrs: false,
+        template: `<h3>inheritAttrs 属性</h3>`
+    })
+
+    // Non-Prop 多节点失效
+    app.component('hi', {
+        template: `
+            <h2>Non-Prop 多节点失效</h2>
+            <h3>hi red</h3>
+            <h3>hi red</h3>
+            <h3>hi red</h3>
+        `
+    })
+
+    // Non-Prop 多节点失效解决方法(1) - 增加一个根节点
+    app.component('hi1', {
+        template: `
+            <div>
+                <h2>Non-Prop 多节点失效解决方法(1)</h2>
+                <h3>hi1 green</h3>
+                <h3>hi1 green</h3>
+                <h3>hi1 green</h3>    
+            </div>
+        `
+    })
+
+    // Non-Prop 多节点失效解决方法(2) - 
+    // 让第一个组件中的<h3>标签复制父组件传递过来的属性
+    app.component('hi2', {
+        template: `
+            <h2>Non-Prop 多节点失效解决方法(2)</h2>
+            <h3 v-bind="$attrs">hi blue</h3>
+            <h3 v-bind:style="$attrs.style">hello blue</h3>
+            <h3>hi blue</h3>    
+        `
+    })
+
+    // 在业务逻辑中使用 Non-props 属性
+    app.component('cs', {
+        mounted() {
+            console.log(this.$attrs.msg);
+        },
+        template: `
+            <h2>在业务逻辑中使用 Non-props 属性</h2>
+            <h3 v-bind="$attrs">hi red</h3>
+        `
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

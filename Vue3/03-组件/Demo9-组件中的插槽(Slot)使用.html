@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo9</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        // 定义一个数据项，然后在插槽中使用
+        data() {
+            return {
+                dinner: '炒面',
+            };
+        },
+
+        // (2)在父组件的插槽中进行使用子组件
+        template: `
+            <h2>欢迎光临-请点餐</h2>
+            <dc> <div style="color:green;font-size:50px;">青椒炒蛋</div> </dc>
+            <dc> <div style="color:red;font-size:50px;">番茄炒蛋</div> </dc>
+            <dc>
+                <div style="color:red;font-size:30px;">
+                    厨师长，<project />
+                </div>
+            </dc>
+
+            <h3>插槽中使用动态数据</h3>
+            <cook>
+                <div>
+                    {{dinner}}，<project />
+                </div>    
+            </cook>
+        `
+    })
+
+    app.component('dc', {
+        template: `
+            <div>
+                <span>经过你的慎重考虑，最终选择了。</span>
+                <span>
+                    <slot></slot>
+                </span>
+            </div>
+        `
+    })
+
+    // (1)声明子组件
+    app.component('project', {
+        template: `<span style="color:blue;">九大簋套餐</span>`
+    })
+
+    app.component('cook', {
+        data() {
+            return {
+                dinner: '老火靓汤',
+            };
+        },
+        template: `
+            <div>
+                <span>经过你的慎重考虑，最终选择了。</span>
+                <span>
+                    <slot></slot>
+                </span>
+            </div>
+        `
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

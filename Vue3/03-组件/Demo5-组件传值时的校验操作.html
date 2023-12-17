@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo5</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    // Vue支持的校验类型包括：String、Boolean、Array、Object、Function 和 Symbol
+    const app = Vue.createApp({
+        data() {
+            return {
+                // name: 123,
+                name: '123',
+                name1: '必须传值',
+                name2: 'default',
+                // name3: 'ice'
+                name3: 'ich'
+            };
+        },
+        template: `
+            <h2>ich.com</h2>
+            <son :name="name" />
+            <ich :name1="name1" />
+            <du />
+            <ice :name3="name3"/>
+        `
+    })
+
+    app.component('Son', {
+        // props: ['name'],
+        // 对类型的校验
+        props: {
+            name: String
+        },
+        template: `<div>{{name}} div</div>`
+    })
+
+    // 校验规则: name1 的值必须是字符串，并且不可以省略
+    app.component('ich', {
+        props: {
+            // name1: String,
+            name1: {
+                type: String,
+                // true 不可以省略，false 可以省略
+                required: true
+            }
+        },
+        template: `<div>{{name1}} ich div</div>`
+    })
+
+    // 在调用组件时，如果不传递参数，则默认值为 ich du
+    app.component('du', {
+        props: {
+            name2: {
+                type: String,
+                default: 'ich du'
+            }
+        },
+        template: `<div>{{name2}} 默认值 div</div>`
+    })
+
+    // 精准校验 - validator
+    app.component('ice', {
+        props: {
+            name3: {
+                type: String,
+                // 判定如果不为 -1 就是通过验证
+                // 使用 search 来验证，返回来的是字符串出现的位置，没有找到时才显示-1
+                validator: function (value) {
+                    console.log(value.search("ich"));
+                    return value.search("ich") != -1
+                },
+                default: 'ich.com'
+            }
+        },
+        template: `<div>{{name3}} 精准校验-validator div</div>`
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>
