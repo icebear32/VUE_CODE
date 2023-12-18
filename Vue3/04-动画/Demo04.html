@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo04</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+    <style>
+        .v-enter-from,
+        .v-leave-to {
+            opacity: 0;
+        }
+
+        .v-enter-to,
+        .v-leave-from {
+            opacity: 1;
+        }
+
+        .v-enter-active {
+            transition: opacity 3s ease-out;
+        }
+
+        .v-leave-active {
+            transition: opacity 3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                isShow: false,
+            };
+        },
+        methods: {
+            handleClick() {
+                this.isShow = !this.isShow
+            }
+        },
+        template: `
+            <transition>
+                <div v-if="isShow">ich</div>    
+            </transition>
+            <button @click="handleClick">切换过渡</button>
+        `
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

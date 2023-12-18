@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo03</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+    <style>
+        @keyframes comeIn {
+            0% {
+                transform: translateX(-120px);
+            }
+
+            100% {
+                transform: translateX(0px);
+            }
+        }
+
+        @keyframes comeOut {
+            0% {
+                transform: translateX(0px);
+            }
+
+            100% {
+                transform: translateX(-120px);
+            }
+        }
+
+        .v-enter-from,
+        .v-leave-to {
+            opacity: 0;
+        }
+
+        .v-enter-to,
+        .v-leave-from7 {
+            opacity: 1;
+        }
+
+        .v-enter-active {
+            animation: comeIn 3s;
+            transition: opacity 7s ease-out;
+        }
+
+        .v-leave-active {
+            animation: comeOut 1s;
+            transition: opacity 7s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                isShow: false
+            };
+        },
+        methods: {
+            handleClick() {
+                this.isShow = !this.isShow
+            }
+        },
+        template: `
+            <transition type="animation">
+                <div v-if="isShow">ich</div>    
+            </transition>
+            <div><button @click="handleClick">切换动画</button></div>
+        `
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo03</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js"></script>
+    <style>
+        @keyframes comein {
+            0% {
+                transform: translateX(-120px);
+            }
+
+            100% {
+                transform: translateX(50px);
+            }
+        }
+
+        @keyframes comeout {
+            0% {
+                transform: translateX(0px);
+            }
+
+            100% {
+                transform: translateX(-120px);
+            }
+        }
+
+        .v-enter-active {
+            animation: comein 1s;
+        }
+
+        .v-leave-active {
+            animation: comeout 1s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                isShow: false
+            };
+        },
+        methods: {
+            handleClick() {
+                this.isShow = !this.isShow
+            }
+        },
+        template: `
+            <transition>
+                <div v-if="isShow">ich</div>    
+            </transition>
+            <div><button @click="handleClick">切换动画</button></div>
+        `
+    })
+
+    const vm = app.mount("#app")
+</script>
+
+</html>
