@@ -4,7 +4,7 @@ import Navbar from './Navbar.vue'
 
 <template>
     <div>
-        <Navbar title="首页" left="返回" right="搜索" />
+        <Navba title="首页" left="返回" right="搜索" />
     </div>
 </template>
 
