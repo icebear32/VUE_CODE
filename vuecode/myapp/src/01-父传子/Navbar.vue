@@ -1,11 +1,9 @@
-<script>
-export default {
-    props: [
-        "title",
-        "left",
-        "right"
-    ]
-}
+<script setup>
+const props = defineProps([
+    "title",
+    "left",
+    "right"
+])
 </script>
 
 <template>
