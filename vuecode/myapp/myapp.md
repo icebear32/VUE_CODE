@@ -178,3 +178,127 @@ const handleClick1 = (root) => {
 
 
 
+## 跨级通信：provide 和 inject
+
+provide`方法用于提供数据，此方法执需要传递两个参数,分别提供数据的`key`与提供数据`value
+
+后代组件可以通过`inject`方法获取数据,通过`key`获取存储的数值，要修改数据要用**.value**
+
+
+
+创建**App.vue，Navbar.vue，Tabbar.vue，TableItem.vue**
+
+App.vue
+
+```vue
+<script setup>
+import { ref, provide } from 'vue'
+import Navbar from './Navbar.vue'
+import Tabbar from './Tabbar.vue'
+
+const navTitle = ref("首页")
+provide('navTitle', navTitle)
+</script>
+
+<template>
+    <div>
+        <Navbar />
+        <Tabbar />
+    </div>
+</template>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+</style>
+```
+
+Navbar.vue
+
+```vue
+<script setup>
+import { inject } from 'vue'
+
+const navTitle = inject('navTitle') // 注入父组件的值
+</script>
+
+<template>
+    <div>
+        <button>返回</button>
+        <span>{{ navTitle }}</span>
+        <button>标题</button>
+    </div>
+</template>
+
+<style scoped>
+div {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    height: 50px;
+    line-height: 50px;
+    background: gray;
+}
+</style>
+```
+
+Tabbar.vue
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import TableItem from './TableItem.vue'
+
+const datalist = ref(["首页", "列表", "我的"])
+</script>
+
+<template>
+    <ul>
+        <TableItem v-for="data in datalist" :key="data" :item="data" />
+    </ul>
+</template>
+
+<style scoped>
+ul {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+}
+
+li {
+    flex: 1;
+    text-align: center;
+}
+</style>
+```
+
+TableItem.vue
+
+```vue
+<script setup>
+import { inject } from 'vue'
+
+const navTitle = inject('navTitle') // 注入爷组件
+
+const props = defineProps(["item"]) // 接受父组件传值
+
+const handleClick = (item) => {
+    console.log(item)
+    navTitle.value = item // 要修改数据要用 .value
+} 
+</script>
+
+<template>
+    <li @click="handleClick(item)">{{ item }}</li>
+</template>
+```
+
