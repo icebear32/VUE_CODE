@@ -302,3 +302,122 @@ const handleClick = (item) => {
 </template>
 ```
 
+
+
+## vuex 或 pinia
+
+
+
+# 2. v-if 和 v-for 优先级
+
+同时使用 `v-if` 和 `v-for` 是**不推荐的**，因为这样二者的优先级不明显
+
+当它们同时存在于一个节点上时，`v-if` 比 `v-for` 的优先级更高
+
+这意味着 `v-if` 的条件将无法访问到 `v-for` 作用域内定义的变量别名
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const todos = ref([
+    { isComplete: true, name: 'yesname' },
+    { isComplete: false, name: 'noname' }
+])
+</script>
+
+<template>
+    <div>
+        <!-- 这会抛出一个错误，因为属性 todo 此时没有在该实例上定义 -->
+        <li v-for="todo in todos" v-if="!todo.isComplete">
+            {{ todo.name }}
+        </li>
+    </div>
+</template>
+```
+
+在外新包装一层 `<template>` 再在其上使用 `v-for` 可以解决这个问题
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+
+const todos = ref([
+    { isComplete: true, name: 'yesname' },
+    { isComplete: false, name: 'noname' }
+])
+</script>
+
+<template>
+    <div>
+        <!-- 这会抛出一个错误，因为属性 todo 此时没有在该实例上定义 -->
+        <!-- <li v-for="todo in todos" v-if="!todo.isComplete">
+            {{ todo.name }}
+        </li> -->
+        <template v-for="todo in todos">
+            <li v-if="todo.isComplete">
+                {{ todo.name }}
+            </li>
+        </template>
+    </div>
+</template>
+```
+
+或者在计算属性中使用过滤
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+
+// 过滤
+const numbers = ref([1, 2, 3, 4, 5])
+
+const evenNumbers = computed(() => {
+    return numbers.value.filter((n) => n % 2 === 0)
+})
+</script>
+
+<template>
+    <hr>
+    <div>
+        <li v-for="n in evenNumbers">{{ n }}</li>
+    </div>
+</template>
+```
+
+
+
+在计算属性不可行的情况下 (例如在多层嵌套的 `v-for` 循环中)，你可以使用排序方法
+
+在计算属性中使用 `reverse()` 和 `sort()` 的时候务必小心！这两个方法将变更原始数组，计算函数中不应该这么做
+
+请在调用这些方法之前创建一个原数组的副本**return [...numbers].reverse()**
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+
+// 排序
+const sets = ref([
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10]
+])
+
+function even(numberssets) {
+    return [...numberssets].reverse().filter((number) => number % 2 === 0)
+}
+</script>
+
+<template>
+    <div>
+        <li v-for="n in evenNumbers">{{ n }}</li>
+    </div>
+    <hr>
+    <div>
+        <ul v-for="numbersset in sets">
+            <li v-for="n in even(numbersset)">{{ n }}</li>
+        </ul>
+    </div>
+</template>
+```
+
