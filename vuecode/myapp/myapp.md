@@ -421,3 +421,127 @@ function even(numberssets) {
 </template>
 ```
 
+
+
+# 3.  vue 生命周期
+
+```
+vue生命周期
+	Render encounters component
+		渲染器，创建组件（全新生命周期开始）
+	setup(Componsition API)
+		最早发生
+	beforeCreate
+		创建前
+	Init Options API
+
+	created
+		创建后
+	Has pre-compiled template
+		判断是否已经有预编译的模板
+			yes：beforeMount
+			no：在运行时进行实时编译模板
+				Compile template on-the-fly
+	beforeMount
+		挂载前
+	initial render create & insert DOM nodes
+		初始渲染创建和插入DOM节点
+	mounted
+		挂载后
+	（不断循环）Mounted when data changes 数据发生变化
+		beforeupdate
+			更新前
+		re-render and patch
+			重新渲染和更新		
+		beforeupdate
+			更新后
+	when component is unmounted 卸载组件时
+		beforeUnmount
+			卸载前
+		unmounted
+			卸载
+```
+
+
+
+# 4.v-model
+
+Vue 内置指令，支持input、select、表单元素、自定义组件
+
+```
+1. vue中双向绑定是一个指令v-model，可以绑定一个动态值到视图，同时视图中变化能改变该值。v-model是语法糖，默认情况下相当于:value和@input。
+2. 使用v-model可以减少大量繁琐的事件处理代码，提高开发效率，代码可读性也更好
+3. 通常在表单项上使用v-model
+4. 原生的表单项可以直接使用v-model，自定义组件上如果要使用它需要在组件内绑定value并处理输入事件
+5. 输出包含v-model模板的组件渲染函数，发现它会被转换为value属性的绑定以及一个事件监听，事件回调函数中会做相应变量更新操作，这说明神奇魔法实际上是vue的编译器完成的
+```
+
+
+
+单个 v-model 绑定 和 多个 v-model 绑定
+
+App.vue
+
+```vue
+<script setup>
+import {ref} from 'vue'
+import VModel from './v-model.vue'
+
+const isShow = ref(true)
+const text = ref('ich')
+</script>
+
+<template>
+    <div>
+        <h1>父组件</h1>
+        <div>isShow：{{ isShow }}</div>
+        <div>text：{{ text }}</div>
+        <div><button @click="isShow = !isShow">开关</button></div>
+        <hr>
+        <VModel v-model:textVal="text" v-model="isShow" />
+    </div>
+</template>
+```
+
+v-model.vue
+
+```vue
+<script setup>
+const props = defineProps(['modelValue', 'textVal'])
+
+const emit = defineEmits(['update:modelValue', 'update:textVal'])
+
+const close = () => {
+    emit('update:modelValue', false)
+}
+
+const change = (e) => {
+    const target = e.target
+    emit('update:textVal', target.value)
+}
+</script>
+
+<template>
+    <div v-if="modelValue" class="model">
+        <div class="close">
+            <button @click="close">关闭</button>
+        </div>
+        <h3>v-model 子组件 dialog</h3>
+        <div>
+            内容：<input @input="change" :value="textVal" type="text">
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.model {
+    width: 500px;
+    border: 5px solid #ccc;
+    padding: 10px;
+}
+</style>
+```
+
+
+
+## 
