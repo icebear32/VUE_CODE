@@ -544,4 +544,124 @@ const change = (e) => {
 
 
 
-## 
+# 5. nextTick
+
+
+
+## 基本用法
+
+App.vue
+
+```vue
+<script setup>
+import { reactive, ref } from 'vue'
+
+let chatList = reactive([
+    { name: 'zs', message: 'xxxxxx' }
+])
+
+let ipt = ref('')
+const send = () => {
+    chatList.push({
+        name: 'ich',
+        message: ipt.value
+    })
+    // ipt.value = ''
+}
+</script>
+
+<template>
+    <div ref="box" class="wraps">
+        <div>
+            <div class="item" v-for="item in chatList">
+                <div>{{ item.name }}：</div>
+                <div>{{ item.message }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="ipt">
+        <div>
+            <textarea v-model="ipt" type="text"></textarea>
+        </div>
+        <div>
+            <button @click="send">send</button>
+        </div>
+    </div>
+</template>
+
+<style scoped lang="less">
+.wraps {
+    margin: 10px auto;
+    width: 500px;
+    height: 400px;
+    overflow: auto;
+    overflow-x: hidden;
+    background: #fff;
+    border: 1px solid #ccc;
+
+    .item {
+        width: 100%;
+        height: 50px;
+        background: #ccc;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        border-bottom: 1px solid #fff;
+    }
+}
+
+.ipt {
+    margin: 10px auto;
+    width: 500px;
+    height: 65px;
+    overflow: auto;
+    overflow-x: hidden;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+</style>
+```
+
+案例的内容是，一个聊条框，不断发送信息，填满聊天框，**发现滚动条并没有随最新内容滚动到最下面**
+
+
+
+使用以下也没有解决滚动条滚动
+
+```
+box.value.scrollTop = 999999
+```
+
+因为vue更新 dom shi异步的，数据更新是同步的
+
+本次执行的代码是同步代码，执行完方法才会更新 dom，所以来不及使得滚动条继续往下滚
+
+```js
+const send = async () => {
+    chatList.push({
+        name: 'ich',
+        message: ipt.value
+    })
+    // ipt.value = ''
+    // box.value.scrollTop = 999999
+
+    // 1. 回调函数模式
+    // nextTick(() => {
+    //     box.value.scrollTop = 999999
+    // })
+
+    // 2. async await 写法(下面开始的都是异步)
+    await nextTick()
+    box.value.scrollTop = 999999
+}
+```
+
+
+
+
+
+1. nextTick是Vue提供的一个全局API，由于vue的异步更新策略导致对数据的修改不会立刻体现在dom变化上，此时如果想要立即获取更新后的dom状态，就需要使用这个方法
+2. Vue 在更新 DOM 时是**异步**执行的。只要侦听到数据变化，Vue 将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。如果同一个 watcher 被多次触发，只会被推入到队列中一次。这种在缓冲时去除重复数据对于避免不必要的计算和 DOM 操作是非常重要的。nextTick方法会在队列中加入一个回调函数，确保该函数在前面的dom操作完成后才调用。
+3. 所以当想在修改数据后立即看到dom执行结果就需要用到nextTick方法。
+4. 比如，在干什么的时候就会使用nextTick，传一个回调函数进去，在里面执行dom操作即可。
+5. 也有简单了解nextTick实现，它会在callbacks里面加入传入的函数，然后用timerFunc异步方式调用它们，首选的异步方式会是Promise。这让我明白了为什么可以在nextTick中看到dom操作结果。
