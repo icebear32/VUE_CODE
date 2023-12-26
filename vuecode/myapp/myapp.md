@@ -922,3 +922,53 @@ watch(message7, (newVal, oldVal) => {
 </template>
 ```
 
+
+
+## watchEffect
+
+立即执行传入的一个函数，同时响应式追踪其依赖，并在其依赖变更时重新运行该函数
+
+```vue
+<script setup>
+import { ref, watchEffect } from 'vue'
+
+let message = ref('ich')
+let message1 = ref('du')
+
+const stop = watchEffect((oninvalidate) => {
+    console.log('message ===> ', message.value)
+    console.log('message1 ===> ', message1.value)
+    oninvalidate(() => { // 清除副作用,就是在触发监听之前会调用一个函数可以处理你的逻辑例如防抖
+        console.log('before')
+    })
+}, {
+    // 副作用刷新时机 flush 一般使用post
+    flush: "post", // 组件更新后执行
+    // flush: "pre", // 组件更新前执行
+    // flush: "sync", // 强制效果始终同步触发
+
+    // onTrigger  可以帮助调试 watchEffect
+    onTrigger(e) {
+        debugger
+    }
+})
+
+// 停止跟踪 watchEffect 返回一个函数, 调用之后将停止更新
+const stopWatch = () => stop()
+</script>
+
+<template>
+    <input v-model="message" type="text">
+    <input v-model="message1" type="text">
+    <button @click="stopWatch">停止监听</button>
+</template>
+```
+
+
+
+## watch和computed的区别以及选择?
+
+1. 计算属性可以**从组件数据派生出新数据**，最常见的使用方式是设置一个函数，返回计算之后的结果，computed和methods的差异是它具备缓存性，如果依赖项不变时不会重新计算。侦听器**可以侦测某个响应式数据的变化并执行副作用**，常见用法是传递一个函数，执行副作用，watch没有返回值，但可以执行异步操作等复杂逻辑。
+2. 计算属性常用场景是简化行内模板中的复杂表达式，模板中出现太多逻辑会使模板变得臃肿不易维护。侦听器常用场景是状态变化之后做一些额外的DOM操作或者异步操作。选择采用何用方案时首先看是否需要派生出新值，基本能用计算属性实现的方式首选计算属性。
+3. 使用过程中有一些细节，比如计算属性也是可以传递对象，成为既可读又可写的计算属性。watch可以传递对象，设置deep、immediate等选项。
+4. vue3中watch选项发生了一些变化，例如不再能侦测一个点操作符之外的字符串形式的表达式； reactivity API中新出现了watch、watchEffect可以完全替代目前的watch选项，且功能更加强大。
