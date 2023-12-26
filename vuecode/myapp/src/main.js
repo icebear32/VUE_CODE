@@ -8,6 +8,7 @@ import { createApp } from 'vue'
 // import App from './06-生命周期/App.vue'
 // import App from './07-v-model/App.vue'
 // import App from './08-nextTick/App.vue'
-import App from './09-computed/App.vue'
+// import App from './09-computed/App.vue'
+import App from './10-watch/App.vue'
 
 createApp(App).mount('#app')
