@@ -665,3 +665,149 @@ const send = async () => {
 3. 所以当想在修改数据后立即看到dom执行结果就需要用到nextTick方法。
 4. 比如，在干什么的时候就会使用nextTick，传一个回调函数进去，在里面执行dom操作即可。
 5. 也有简单了解nextTick实现，它会在callbacks里面加入传入的函数，然后用timerFunc异步方式调用它们，首选的异步方式会是Promise。这让我明白了为什么可以在nextTick中看到dom操作结果。
+
+
+
+# computed 和 watch
+
+
+
+## computed 计算属性
+
+### 基本用法
+
+```vue
+<script setup>
+import { ref, computed, reactive } from 'vue'
+
+let firstName = ref('ich')
+let lastName = ref('du')
+
+// 1. 选项式写法
+// const name = computed({
+//     get() { // 读取值操作
+//         return firstName.value + '&' + lastName.value
+//     },
+//     set(newVal) { // 设置值操作
+//         [firstName.value,lastName.value] = newVal.split('&')
+//     }
+// })
+// const changeName = () => {
+//     name.value = 'icebear&panda'
+// }
+
+// 2. 函数式写法 只能支持一个getter函数不允许修改值的
+let name = computed(() => {
+    firstName.value + '&' + lastName
+})
+// const changeName = () => {
+//     name.value = 'icebear&panda'
+// }
+// 警告：Write operation failed: computed value is readonly
+// 函数式写法只运行只读，不允许修改值的
+</script>
+
+<template>
+    <div>
+        <div>
+            姓：<input v-model="firstName" type="text">
+        </div>
+        <div>
+            名：<input v-model="lastName" type="text">
+        </div>
+        <div>
+            全名：{{ name }}
+        </div>
+        <div>
+            <button @click="changeName">changeName</button>
+        </div>
+    </div>
+</template>
+```
+
+### 购物车案例
+
+当computed里的依赖的值发生变化，会自动触发计算属性的更新，这样就不会当需要更新数据的时候去调用更新数据的函数
+
+```vue
+<script setup>
+import { ref, computed, reactive } from 'vue'
+
+// 购物车案例
+let keyWord = ref('')
+
+const data = reactive([
+    {
+        name: "小满的绿帽子",
+        price: 100,
+        num: 1,
+    },
+    {
+        name: "小满的红衣服",
+        price: 200,
+        num: 1,
+    },
+    {
+        name: "小满的黑袜子",
+        price: 300,
+        num: 1,
+    }
+])
+
+let searchData = computed(() => {
+    return data.filter(item => item.name.includes(keyWord.value))
+})
+
+let total = computed(() => {
+    return data.reduce((prev, next) => {
+        return prev + next.num * next.price
+    }, 0)
+})
+
+const del = (index) => {
+    data.splice(index, 1)
+}
+</script>
+
+<template>
+    <hr>
+    <div>
+        <input placeholder="请输入名称" v-model="keyWord" type="text">
+        <table style="margin-top:10px;" width="500" cellspacing="0" cellpadding="0" border>
+            <thead>
+                <tr>
+                    <th>物品</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>总价</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item, index) in searchData">
+                    <td align="center">{{ item.name }}</td>
+                    <td align="center">{{ item.price }}</td>
+                    <td align="center">
+                        <button @click="item.num > 1 ? item.num-- : null">-</button>
+                        <input v-model="item.num" type="number" style="width: 30px;">
+                        <button @click="item.num < 99 ? item.num++ : null">+</button>
+                    </td>
+                    <td align="center">{{ item.price * item.num }}</td>
+                    <td align="center">
+                        <button @click="del(index)">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" align="right">
+                        <span>总价：{{ total }}</span>
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
+</template>
+```
+
