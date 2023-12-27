@@ -1222,3 +1222,77 @@ const value4 = ref('')
 ------
 
 4. keep-alive是一个通用组件，它内部定义了一个map，缓存创建过的组件实例，它返回的渲染函数内部会查找内嵌的component组件对应组件的vnode，如果该组件在map中存在就直接返回它。由于component的is属性是个响应式数据，因此只要它变化，keep-alive的render函数就会重新执行。
+
+
+
+# 8. 自定义指令
+
+
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import A from './A.vue'
+
+let flag = ref(true)
+
+const vMove = {
+    created: () => {
+        console.log("初始化====>");
+    },
+    beforeMount(...args) {
+        // 在元素上做些操作
+        console.log("初始化一次=======>");
+        console.log(args)
+    },
+    mounted(el, dir) {
+        el.style.background = dir.value.background;
+        console.log("初始化========>");
+    },
+    beforeUpdate() {
+        console.log("更新之前");
+    },
+    updated() {
+        console.log("更新结束");
+    },
+    beforeUnmount(...args) {
+        console.log(args);
+        console.log("======>卸载之前");
+    },
+    unmounted(...args) {
+        console.log(args);
+        console.log("======>卸载完成");
+    },
+};
+</script>
+
+<template>
+    <div>
+        <button @click="flag = !flag">切换</button>
+        <A v-if="flag" v-move:aaa.ich="{ background: 'red' }" />
+    </div>
+</template>
+```
+
+A.vue
+
+```vue
+<script setup>
+
+</script>
+
+<template>
+    <div class="A">
+        A 组件
+    </div>
+</template>
+
+<style scoped>
+.A {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ccc;
+}
+</style>
+```
+

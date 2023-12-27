@@ -14,7 +14,8 @@ import 'element-plus/dist/index.css'
 // import App from './09-computed/App.vue'
 // import App from './10-watch/App.vue'
 // import App from './11-watchRffect/App.vue'
-import App from './12-keep-alive/App.vue'
+// import App from './12-keep-alive/App.vue'
+import App from './13-自定义指令/App.vue'
 
 const app = createApp(App)
 
