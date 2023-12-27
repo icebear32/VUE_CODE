@@ -1296,3 +1296,152 @@ A.vue
 </style>
 ```
 
+
+
+## 案例
+
+### 按钮权限
+
+App.vue
+
+```vue
+<template>
+    <div class="btns">
+        <button v-has-show="'shop:create'">创建</button>
+        <button v-has-show="'shop:edit'">编辑</button>
+        <button v-has-show="'shop:delete'">删除</button>
+    </div>
+</template>
+  
+<script setup>
+import { ref, reactive } from 'vue'
+
+// permission
+localStorage.setItem('userId', 'ich')
+// mock后台返回的数据
+const permission = [
+    'ich:shop:edit',
+    'ich:shop:create',
+    'ich:shop:delete'
+]
+const userId = localStorage.getItem('userId')
+
+const vHasShow = (el, bingding) => {
+    if (!permission.includes(userId + ':' + bingding.value)) {
+        el.style.display = 'none'
+    }
+    // console.log(el, bingding)
+}
+
+</script>
+  
+<style scoped lang='less'>
+.btns {
+    button {
+        margin: 10px;
+    }
+}
+</style>
+```
+
+
+
+### 指令拖拽
+
+App.vue
+
+```vue
+<template>
+    <div v-move class="box">
+        <div class="header"></div>
+        <div>
+            内容
+        </div>
+    </div>
+</template>
+   
+<script setup>
+const vMove = {
+    mounted(el) {
+        let moveEl = el.firstElementChild
+        const mouseDown = (e) => {
+            //鼠标点击物体那一刻相对于物体左侧边框的距离=点击时的位置相对于浏览器最左边的距离-物体左边框相对于浏览器最左边的距离
+            console.log(e.clientX, e.clientY, "-----起始", el.offsetLeft)
+            let X = e.clientX - el.offsetLeft
+            let Y = e.clientY - el.offsetTop
+            const move = (e) => {
+                el.style.left = e.clientX - X + "px"
+                el.style.top = e.clientY - Y + "px"
+                console.log(e.clientX, e.clientY, "---改变")
+            }
+            document.addEventListener("mousemove", move)
+            document.addEventListener("mouseup", () => {
+                document.removeEventListener("mousemove", move)
+            })
+        }
+        moveEl.addEventListener("mousedown", mouseDown)
+    },
+}
+</script>
+   
+<style lang='less'>
+.box {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ccc;
+
+    .header {
+        height: 20px;
+        background: black;
+        cursor: move;
+    }
+}
+</style>
+```
+
+
+
+### 图片懒加载
+
+默认展示vue logo，滑动到可视区域加载图片
+
+App.vue
+
+```vue
+<template>
+    <div>
+        <div v-for="item in arr">
+            <img height="500" :data-index="item" v-lazy="item" width="360" alt="">
+        </div>
+    </div>
+</template>
+ 
+<script setup>
+const images = import.meta.glob('../assets/images/*.*', { eager: true })
+// console.log(images)
+let arr = Object.values(images).map(v => v.default)
+
+let vLazy = async (el, binding) => {
+    let url = await import('../assets/vue.svg')
+    el.src = url.default;
+    let observer = new IntersectionObserver((entries) => {
+        console.log(entries[0], el)
+        if (entries[0].intersectionRatio > 0 && entries[0].isIntersecting) {
+            setTimeout(() => {
+                el.src = binding.value;
+                observer.unobserve(el)
+            }, 2000)
+        }
+    })
+    observer.observe(el)
+}
+
+</script>
+ 
+<style scoped lang='less'></style>
+```
+

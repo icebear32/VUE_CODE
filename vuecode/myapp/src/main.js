@@ -15,7 +15,10 @@ import 'element-plus/dist/index.css'
 // import App from './10-watch/App.vue'
 // import App from './11-watchRffect/App.vue'
 // import App from './12-keep-alive/App.vue'
-import App from './13-自定义指令/App.vue'
+// import App from './13-自定义指令/App.vue'
+// import App from './14-自定义指令-按钮权限/App.vue'
+// import App from './15-自定义指令-指令拖拽/App.vue'
+import App from './16-自定义指令-图片懒加载/App.vue'
 
 const app = createApp(App)
 
