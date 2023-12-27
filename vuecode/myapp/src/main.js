@@ -1,4 +1,7 @@
 import { createApp } from 'vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
 // import './style.css'
 // import App from './App.vue'
 // import App from './01-父传子/App.vue'
@@ -10,6 +13,10 @@ import { createApp } from 'vue'
 // import App from './08-nextTick/App.vue'
 // import App from './09-computed/App.vue'
 // import App from './10-watch/App.vue'
-import App from './11-watchRffect/App.vue'
+// import App from './11-watchRffect/App.vue'
+import App from './12-keep-alive/App.vue'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+app.use(ElementPlus)
+app.mount('#app')

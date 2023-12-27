@@ -668,7 +668,7 @@ const send = async () => {
 
 
 
-# computed 和 watch
+# 6. computed 和 watch
 
 
 
@@ -972,3 +972,253 @@ const stopWatch = () => stop()
 2. 计算属性常用场景是简化行内模板中的复杂表达式，模板中出现太多逻辑会使模板变得臃肿不易维护。侦听器常用场景是状态变化之后做一些额外的DOM操作或者异步操作。选择采用何用方案时首先看是否需要派生出新值，基本能用计算属性实现的方式首选计算属性。
 3. 使用过程中有一些细节，比如计算属性也是可以传递对象，成为既可读又可写的计算属性。watch可以传递对象，设置deep、immediate等选项。
 4. vue3中watch选项发生了一些变化，例如不再能侦测一个点操作符之外的字符串形式的表达式； reactivity API中新出现了watch、watchEffect可以完全替代目前的watch选项，且功能更加强大。
+
+
+
+## watch 和 watchEffect 异同
+
+- `watchEffect`立即运行一个函数，然后被动地追踪它的依赖，当这些依赖改变时重新执行该函数。`watch`侦测一个或多个响应式数据源并在数据源变化时调用一个回调函数。
+- `watchEffect(effect)`是一种特殊`watch`，传入的函数既是依赖收集的数据源，也是回调函数。如果我们不关心响应式数据变化前后的值，只是想拿这些数据做些事情，那么`watchEffect`就是我们需要的。watch更底层，可以接收多种数据源，包括用于依赖收集的getter函数，因此它完全可以实现watchEffect的功能，同时由于可以指定getter函数，依赖可以控制的更精确，还能获取数据变化前后的值，因此如果需要这些时我们会使用watch。
+- `watchEffect`在使用时，传入的函数会立刻执行一次。`watch`默认情况下并不会执行回调函数，除非我们手动设置`immediate`选项。
+- 从实现上来说，`watchEffect(fn)`相当于`watch(fn,fn,{immediate:true})`
+
+
+
+# 7. kepp-alive
+
+## 内置组件keep-alive
+
+有时候不希望组件被重新渲染影响使用体验；或者处于性能考虑，避免多次重复渲染降低性能。而是希望组件可以缓存下来，维持当前的状态。就需要用到`keep-alive`组件。
+
+App.vue
+
+```vue
+<script setup>
+import { ref, reactive } from 'vue'
+import A from './A.vue'
+import B from './B.vue'
+
+const flag = ref(true)
+</script>
+
+<template>
+    <el-button type="primary" size="default" @click="flag = !flag">切换组件</el-button>
+    <hr>
+    <!-- 
+        include 允许哪个组件缓存
+        exclude 不允许运行哪个组件缓存
+        include 和 exclude 允许组件有条件地缓存。二者都可以用逗号分隔字符串、正则表达式或一个数组来表示
+    -->
+    <!-- <KeepAlive :include="['A', 'B']" :exclude="['A']"> -->
+    <!-- 通过传入 max 来限制可被缓存的最大组件实例数 -->
+    <KeepAlive :max="10">
+        <A v-if="flag" />
+        <B v-else />
+    </KeepAlive>
+</template>
+```
+
+
+
+* 开启keep-alive 生命周期的变化
+  * 初次进入时： onMounted onActivated
+  * 退出后触发 deactivated
+  * 再次进入：只会触发 onActivated
+  * 事件挂载的方法等，只执行一次的放在 onMounted 中；组件每次进去执行的方法放在 onActivated 中
+
+A.vue
+
+```vue
+<template>
+    <div>
+        <h1>A 组件</h1>
+    </div>
+    <div>
+        <el-checkbox v-model="checked1" label="Option 1" size="large" />
+        <el-checkbox v-model="checked2" label="Option 2" size="large" />
+    </div>
+    <div>
+        <el-checkbox v-model="checked3" label="Option 1" />
+        <el-checkbox v-model="checked4" label="Option 2" />
+    </div>
+    <div>
+        <el-checkbox v-model="checked5" label="Option 1" size="small" />
+        <el-checkbox v-model="checked6" label="Option 2" size="small" />
+    </div>
+    <div>
+        <el-checkbox v-model="checked5" label="Option 1" size="small" disabled />
+        <el-checkbox v-model="checked6" label="Option 2" size="small" disabled />
+    </div>
+</template>
+  
+<script setup>
+import { onActivated, onDeactivated, onMounted, onUnmounted, ref } from 'vue'
+
+const checked1 = ref(true)
+const checked2 = ref(false)
+const checked3 = ref(false)
+const checked4 = ref(false)
+const checked5 = ref(false)
+const checked6 = ref(false)
+
+// keep-alive 生命周期的变化
+// * 初次进入时： onMounted onActivated
+// * 退出后触发 deactivated
+// * 再次进入：只会触发 onActivated
+// * 事件挂载的方法等，只执行一次的放在 onMounted 中；组件每次进去执行的方法放在 onActivated 中
+onMounted(() => {
+    console.log('初始化')
+})
+
+onActivated(() => {
+    console.log('keep-alive 初始化')
+})
+
+onDeactivated(() => {
+    console.log('keep-alive 卸载')
+})
+
+onUnmounted(() => {
+    console.log('卸载')
+})
+</script>
+  
+```
+
+
+
+B.vue
+
+```vue
+<template>
+    <div>
+        <h1>B 组件</h1>
+    </div>
+    <div class="demo-date-picker">
+        <div class="container">
+            <div class="block">
+                <span class="demonstration">Week</span>
+                <el-date-picker v-model="value1" type="week" format="[Week] ww" placeholder="Pick a week" />
+            </div>
+            <div class="block">
+                <span class="demonstration">Month</span>
+                <el-date-picker v-model="value2" type="month" placeholder="Pick a month" />
+            </div>
+        </div>
+        <div class="container">
+            <div class="block">
+                <span class="demonstration">Year</span>
+                <el-date-picker v-model="value3" type="year" placeholder="Pick a year" />
+            </div>
+            <div class="block">
+                <span class="demonstration">Dates</span>
+                <el-date-picker v-model="value4" type="dates" placeholder="Pick one or more dates" />
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const value1 = ref('')
+const value2 = ref('')
+const value3 = ref('')
+const value4 = ref('')
+</script>
+
+<style scoped>
+.demo-date-picker {
+    display: flex;
+    width: 100%;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.demo-date-picker .block {
+    padding: 30px 0;
+    text-align: center;
+    border-right: solid 1px var(--el-border-color);
+    flex: 1;
+}
+
+.demo-date-picker .block:last-child {
+    border-right: none;
+}
+
+.demo-date-picker .container {
+    flex: 1;
+    border-right: solid 1px var(--el-border-color);
+}
+
+.demo-date-picker .container .block {
+    border-right: none;
+}
+
+.demo-date-picker .container .block:last-child {
+    border-top: solid 1px var(--el-border-color);
+}
+
+.demo-date-picker .container:last-child {
+    border-right: none;
+}
+
+.demo-date-picker .demonstration {
+    display: block;
+    color: var(--el-text-color-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+</style>
+  
+```
+
+
+
+## 怎么缓存当前组件？缓存后怎么更新？
+
+1. 开发中缓存组件使用keep-alive组件，keep-alive是vue内置组件，keep-alive包裹动态组件component时，会缓存不活动的组件实例，而不是销毁它们，这样在组件切换过程中将状态保留在内存中，防止重复渲染DOM。
+
+   ```vue
+   <keep-alive>
+    <component :is="view"></component>
+   </keep-alive>
+   ```
+
+2. 结合属性include和exclude可以明确指定缓存哪些组件或排除缓存指定组件。vue3中结合vue-router时变化较大，之前是`keep-alive`包裹`router-view`，现在需要反过来用`router-view`包裹`keep-alive`：
+
+   ```vue
+   <router-view v-slot="{ Component }">
+    <keep-alive>
+      <component :is="Component"></component>
+    </keep-alive>
+   </router-view>
+   ```
+
+------
+
+3. 缓存后如果要获取数据，解决方案可以有以下两种：
+
+- beforeRouteEnter：在有vue-router的项目，每次进入路由的时候，都会执行`beforeRouteEnter`
+
+  ```js
+  beforeRouteEnter(to, from, next){
+   next(vm=>{
+     console.log(vm)
+     // 每次进入路由执行
+     vm.getData()  // 获取数据
+   })
+  },
+  ```
+
+- actived：在`keep-alive`缓存的组件被激活的时候，都会执行`actived`钩子
+
+  ```js
+  activated(){
+       this.getData() // 获取数据
+  },
+  ```
+
+------
+
+4. keep-alive是一个通用组件，它内部定义了一个map，缓存创建过的组件实例，它返回的渲染函数内部会查找内嵌的component组件对应组件的vnode，如果该组件在map中存在就直接返回它。由于component的is属性是个响应式数据，因此只要它变化，keep-alive的render函数就会重新执行。
