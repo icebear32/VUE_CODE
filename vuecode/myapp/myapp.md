@@ -1540,3 +1540,126 @@ const msg = ref('Hello World!')
 </template>
 ```
 
+
+
+# 11. 递归组件
+
+1. 如果某个组件通过组件名称引用它自己，这种情况就是递归组件。
+2. 实际开发中类似Tree、Menu这类组件，它们的节点往往包含子节点，子节点结构和父节点往往是相同的。这类组件的数据往往也是树形结构，这种都是使用递归组件的典型场景。
+3. 使用递归组件时，由于并未也不能在组件内部导入它自己，所以设置组件`name`属性，用来查找组件定义，如果使用SFC，则可以通过SFC文件名推断。组件内部通常也要有递归结束条件，比如model.children这样的判断。
+4. 查看生成渲染函数可知，递归组件查找时会传递一个布尔值给`resolveComponent`，这样实际获取的组件就是当前组件本身。
+
+
+
+App.vue
+
+在父组件配置数据结构 数组对象格式 传给子组件
+
+```vue
+<script setup>
+import { reactive } from 'vue'
+import Tree from './Tree.vue'
+
+const data = reactive([
+    {
+        name: '1',
+        checked: false,
+        children: [
+            {
+                name: '1-1',
+                checked: false,
+            }
+        ]
+    },
+    {
+        name: '2',
+        checked: false,
+    },
+    {
+        name: '3',
+        checked: false,
+        children: [
+            {
+                name: '3-1',
+                checked: false,
+                children: [
+                    {
+                        name: '3-1-1',
+                        checked: false,
+                    },
+                    {
+                        name: '3-1-2',
+                        checked: false,
+                    }
+                ]
+            }
+        ]
+    }
+])
+</script>
+
+<template>
+    <div>
+        <Tree :data="data" />
+    </div>
+</template>
+```
+
+Tree.vue
+
+子组件接收值 第一个script
+
+```vue
+<script setup>
+const props = defineProps([
+    'data'
+])
+</script>
+
+<template>
+    <div class="tree" v-for="item in data">
+        <input v-model="item.checked" type="checkbox"><span>{{ item.name }}</span>
+        <Tree v-if="item.children" :data="item.children" />
+    </div>
+</template>
+
+<style scoped lang="less">
+.tree {
+    margin-left: 10px;
+}
+</style>
+```
+
+
+
+## 递归组件处理事件
+
+Tree.vue
+
+```vue
+<script setup>
+const props = defineProps([
+    'data'
+])
+
+const clickTap = (item, e) => {
+    console.log(item)
+    console.log(e.target)
+}
+</script>
+
+<template>
+    <!-- 递归组件处理事件，加 .stop 阻止冒泡事件 -->
+    <div @click.stop="clickTap(item, $event)" class="tree" v-for="item in data">
+        <input v-model="item.checked" type="checkbox"><span>{{ item.name }}</span>
+        <Tree v-if="item.children" :data="item.children" />
+    </div>
+</template>
+
+<style scoped lang="less">
+.tree {
+    margin-left: 10px;
+}
+</style>
+```
+
