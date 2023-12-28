@@ -1445,3 +1445,98 @@ let vLazy = async (el, binding) => {
 <style scoped lang='less'></style>
 ```
 
+
+
+# 9. 属性透传
+
+App.vue，爷组件
+
+```vue
+<script setup>
+import Navbar from './Navbar.vue'
+
+const handleClick = () => {
+    console.log('app-111')
+}
+</script>
+
+<template>
+    <div>
+        <h1>App</h1>
+        <Navbar class="navbar" id="navbarid" style="background-color: yellow;" @click="handleClick()" />
+    </div>
+</template>
+```
+
+Navbar.vue，父组件
+
+```vue
+<script setup>
+import NavbarChild from './NavbarChild.vue'
+
+// 禁止透传
+defineOptions({
+    inheritAttrs: false
+})
+</script>
+
+<template>
+    <div class="aaa" style="background: red;">
+        <h2>Navbar</h2>
+        <!-- 禁止透传后可以使用控制进行透传 -->
+        <button v-bind="$attrs">test</button>
+        <span>透传进来的：{{ $attrs }}</span>
+        <NavbarChild />
+    </div>
+</template>
+```
+
+NavbarChlid.vue，孙组件
+
+```vue
+<script setup>
+
+</script>
+
+<template>
+    <div class="bbb"  style="background: green;">
+        <h3>NavbarChlid</h3>
+    </div>
+</template>
+```
+
+
+
+## $attrs 和 $listeners的使用场景
+
+- 可能会有一些属性和事件没有在props中定义，这类称为非属性特性，结合v-bind指令可以直接透传给内部的子组件。
+- 这类“属性透传”常常用于包装高阶组件时往内部传递属性，常用于爷孙组件之间传参。比如我在扩展A组件时创建了组件B组件，然后在C组件中使用B，此时传递给C的属性中只有props里面声明的属性是给B使用的，其他的都是A需要的，此时就可以利用v-bind="$attrs"透传下去。
+- 最常见用法是结合v-bind做展开；$attrs本身不是响应式的，除非访问的属性本身是响应式对象。
+- vue2中使用**listeners**获取事件，vue3中已移除，均合并到**attrs**中，使用起来更简单了。
+
+
+
+# 10. v-once
+
+- `v-once`是vue的内置指令，作用是仅渲染指定组件或元素一次，并跳过未来对其更新。
+- 如果有一些元素或者组件在初始化渲染之后不再需要变化，这种情况下适合使用`v-once`，这样哪怕这些数据变化，vue也会跳过更新，是一种代码优化手段。
+- 只需要作用的组件或元素上加上v-once即可。
+- vue3.2之后，又增加了`v-memo`指令，可以有条件缓存部分模板并控制它们的更新，可以说控制力更强了。
+- 编译器发现元素上面有v-once时，会将首次计算结果存入缓存对象，组件再次渲染时就会从缓存获取，从而避免再次计算。
+
+App.vue
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const msg = ref('Hello World!')
+</script>
+
+<template>
+  <h1 v-once>{{ msg }}</h1>
+  <h1>{{ msg }}</h1>
+  <input v-model="msg">
+</template>
+```
+

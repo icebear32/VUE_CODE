@@ -19,7 +19,8 @@ import 'element-plus/dist/index.css'
 // import App from './14-自定义指令-按钮权限/App.vue'
 // import App from './15-自定义指令-指令拖拽/App.vue'
 // import App from './16-自定义指令-图片懒加载/App.vue'
-import App from './17-属性透传/App.vue'
+// import App from './17-属性透传/App.vue'
+import App from './18-v-once/App.vue'
 
 const app = createApp(App)
 
