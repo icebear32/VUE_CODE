@@ -1663,3 +1663,191 @@ const clickTap = (item, e) => {
 </style>
 ```
 
+
+
+# 12. 动态组件
+
+什么是动态组件 就是：让多个组件使用同一个挂载点，并动态切换，这就是动态组件
+
+在挂载点使用**component**标签，然后使用**v-bind:is="组件"**
+
+
+
+## 基本用法
+
+A.vue
+
+```vue
+<script setup>
+
+</script>
+
+<template>
+    <div class="com">A 组件</div>
+</template>
+
+<style scoped lang="less">
+.com {
+    width: 660px;
+    height: 300px;
+    border: 2px solid #ccc;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+```
+
+B.vue
+
+```vue
+<script setup>
+
+</script>
+
+<template>
+    <div class="com">B 组件</div>
+</template>
+
+<style scoped lang="less">
+.com {
+    width: 660px;
+    height: 300px;
+    border: 2px solid #ccc;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+```
+
+C.vue
+
+```vue
+<script setup>
+
+</script>
+
+<template>
+    <div class="com">C 组件</div>
+</template>
+
+<style scoped lang="less">
+.com {
+    width: 660px;
+    height: 300px;
+    border: 2px solid #ccc;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+```
+
+App.vue
+
+```vue
+<script setup>
+import { ref, reactive } from 'vue'
+import Avue from './A.vue'
+import Bvue from './B.vue'
+import Cvue from './C.vue'
+
+const comId = ref(Avue)
+const active = ref(0)
+
+const data = reactive([
+    {
+        name: 'A组件',
+        com: Avue
+    },
+    {
+        name: 'B组件',
+        com: Bvue
+    },
+    {
+        name: 'C组件',
+        com: Cvue
+    }
+])
+
+const switchCom = (item, index) => {
+    comId.value = item.com
+    active.value = index
+}
+</script>
+
+<template>
+    <div style="display: flex;">
+        <div @click="switchCom(item, index)" :class="[active == index ? 'active' : '']" class="tabs"
+            v-for="(item, index) in data">
+            <div>{{ item.name }}</div>
+        </div>
+    </div>
+    <component :is="comId"></component>
+</template>
+
+<style scoped lang="less">
+.active {
+    background: skyblue;
+}
+
+.tabs {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+</style>
+```
+
+运行到浏览器查看，每点击其组件叫跳转至该组件
+
+
+
+### 性能优化
+
+1. 在Vue2 的时候is 是通过组件名称切换的 在Vue3 setup 是通过组件实例切换的
+
+2. 如果把组件实例放到Reactive Vue会给你一个警告runtime-core.esm-bundler.js:38 [Vue warn]: Vue received a Component which was made a reactive object. This can lead to unnecessary performance overhead, and should be avoided by marking the component with `markRaw` or using `shallowRef` instead of `ref`. 
+   Component that was made reactive: 
+
+这是因为 reactive 会进行proxy 代理，而组件代理之后毫无用处，节省性能开销 推荐使用shallowRef 或者 markRaw 跳过proxy 代理
+
+修改如下：
+
+```js
+<script setup>
+import { ref, reactive, markRaw, shallowRef } from 'vue'
+import Avue from './A.vue'
+import Bvue from './B.vue'
+import Cvue from './C.vue'
+
+const comId = shallowRef(Avue)
+const active = ref(0)
+
+const data = reactive([
+    {
+        name: 'A组件',
+        com: markRaw(Avue)
+    },
+    {
+        name: 'B组件',
+        com: markRaw(Bvue)
+    },
+    {
+        name: 'C组件',
+        com: markRaw(Cvue)
+    }
+])
+
+const switchCom = (item, index) => {
+    comId.value = item.com
+    active.value = index
+}
+</script>
+```
+
