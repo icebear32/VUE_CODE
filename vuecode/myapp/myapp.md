@@ -1851,3 +1851,65 @@ const switchCom = (item, index) => {
 </script>
 ```
 
+
+
+# 13. 异步组件
+
+在大型项目中，如果首屏一次性加载所有的组件，会导致首次加载时间过长，影响用户体验(甚至导致用户流失)
+
+解决：讲内容或组件分割出来，当需要的时候再加载，异步组件就是拆分的块
+
+
+
+Some.vue
+
+```vue
+<script setup>
+console.log("我是异步组件")
+</script>
+
+<template>
+    <div>
+        <h3>== 我是异步组件 ==</h3>
+    </div>
+</template>
+```
+
+App.vue
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import Some from './Some.vue'
+
+const isLoaded = ref(false)
+</script>
+
+<template>
+    <h2>异步组件</h2>
+    <div class="box">
+        <button type="button" @click="isLoaded = true">加载组件</button>
+        <Some v-if="isLoaded" />
+    </div>
+</template>
+```
+
+运行到浏览器查看
+
+问题：在**network**中被没有新的资源被载入，说明这个组件在首屏已经被载入，之后只是被调用
+
+修改 App.vue 的 script 代码
+
+```vue
+<script setup>
+import { ref, defineAsyncComponent } from 'vue'
+// import Some from './Some.vue'
+
+const isLoaded = ref(false)
+
+const Some = defineAsyncComponent(() => {
+    return import('./Some.vue')
+})
+</script>
+```
+

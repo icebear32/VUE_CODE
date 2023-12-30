@@ -22,7 +22,8 @@ import 'element-plus/dist/index.css'
 // import App from './17-属性透传/App.vue'
 // import App from './18-v-once/App.vue'
 // import App from './19-递归组件/App.vue'
-import App from './20-动态组件/App.vue'
+// import App from './20-动态组件/App.vue'
+import App from './21-异步组件/App.vue'
 
 const app = createApp(App)
 
