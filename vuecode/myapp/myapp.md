@@ -1915,3 +1915,250 @@ const Some = defineAsyncComponent(() => {
 
 
 
+# 14. vue3 新特性
+
+- Composition API
+- SFC Composition API语法糖
+- Teleport传送门
+- Fragments片段
+- Emits选项
+- 自定义渲染器
+- SFC CSS变量
+- Suspense
+
+
+
+1. api层面Vue3新特性主要包括：Composition API、SFC Composition API语法糖、Teleport传送门、Fragments 片段、Emits选项、自定义渲染器、SFC CSS变量、Suspense
+2. 另外，Vue3.0在框架层面也有很多亮眼的改进：
+
+- 更快
+  - 虚拟DOM重写
+  - 编译器优化：静态提升、patchFlags、block等
+  - 基于Proxy的响应式系统
+- 更小：更好的摇树优化
+- 更容易维护：TypeScript + 模块化
+- 更容易扩展
+  - 独立的响应化模块
+  - 自定义渲染器
+
+
+
+# 15. Vue 3.0的设计目标是什么？做了哪些优化?
+
+- Vue3的最大设计目标是替代Vue2，为了实现这一点，Vue3在以下几个方面做了很大改进，如：易用性、框架性能、扩展性、可维护性、开发体验等
+- 易用性方面主要是API简化，比如`v-model`在Vue3中变成了Vue2中`v-model`和`sync`修饰符的结合体，用户不用区分两者不同，也不用选择困难。类似的简化还有用于渲染函数内部生成VNode的`h(type, props, children)`，其中`props`不用考虑区分属性、特性、事件等，框架替我们判断，易用性大增。
+- 开发体验方面，新组件`Teleport`传送门、`Fragments` 、`Suspense`等都会简化特定场景的代码编写，`SFC Composition API`语法糖更是极大提升我们开发体验。
+- 扩展性方面提升如独立的`reactivity`模块，`custom renderer` API等
+- 可维护性方面主要是`Composition API`，更容易编写高复用性的业务逻辑。还有对TypeScript支持的提升。
+- 性能方面的改进也很显著，例如编译期优化、基于`Proxy`的响应式系统
+
+
+
+# 16. ref 与 reactive 异同
+
+
+
+## ref
+
+接受一个内部值并返回一个[应式且可变的 ref 对象
+
+ref 对象仅有一个 `.value` property，指向该内部值
+
+```vue
+<script setup>
+import { ref, isRef, shallowRef, triggerRef, customRef } from 'vue'
+
+const ich = ref({ name: 'ich' })
+const change1 = () => {
+    // 注意被ref包装之后需要.value 来进行赋值
+    ich.value.name = 'du'
+
+    // 判断是不是一个ref对象
+    console.log(isRef(ich))
+}
+
+const du = shallowRef({ name: 'du' })
+const change2 = () => {
+    // shallowRef 浅层次的响应，创建一个跟踪自身 .value 变化的 ref，但不会使其值也变成响应式的
+    // du.value.name = "ich" // 改变了，但是视图不会发生变化，修改其属性是非响应式的这样是不会改变的
+    // console.log(du)
+
+    du.value = {
+        name: 'ich'
+    }
+    console.log(du)
+
+    // ref和 shallowRef是不能一块写的不然会影响shallowRef 造成视图的更新
+}
+
+const ichdu = shallowRef({ name: 'ichdu' })
+const change3 = () => {
+    ichdu.value.name = "我被影响了"
+    triggerRef(ichdu)
+    console.log(ichdu)
+}
+
+// 自定义ref 
+// customRef 是个工厂函数要求返回一个对象 并且实现 get 和 set  适合去做防抖之类的
+function myRef(value) {
+    let timer
+    return customRef((track, trigger) => {
+        return {
+            get() {
+                track()
+                return value
+            },
+            set(newVal) {
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                    console.log('触发了set')
+                    value = newVal
+                    trigger()
+                }, 500)
+            }
+        }
+    })
+}
+const name = myRef('my name')
+const change4 = () => {
+    name.value = 'ichdu'
+}
+</script>
+
+<template>
+    <div>ref：{{ ich }}</div>
+    <button @click="change1">修改ich</button>
+    <hr>
+    <div>shallowRef：{{ du }}</div>
+    <button @click="change2">修改du</button>
+    <hr>
+    <div>triggerRef：{{ ichdu }}</div>
+    <button @click="change3">强制更新</button>
+    <hr>
+    <div>customRef：{{ name }}</div>
+    <button @click="change4">自定义ref </button>
+</template>
+```
+
+
+
+## reactive
+
+用来绑定复杂的数据类型 例如 对象 数组
+
+```vue
+<script setup>
+import { reactive, readonly, shallowReactive } from 'vue'
+
+// ref 支持所有类型 reactive 引用类型 Array Object Map Set
+// ref 取值赋值都需要加 .value，reactive 是不需要 .value
+let form = reactive({
+    name: 'ich',
+    age: 23
+})
+const submit = () => {
+    console.log(form)
+}
+
+let list = reactive([])
+const add = () => {
+    setTimeout(() => {
+        // let res = ['x', 'xx', 'xxx']
+        // list = res
+        // console.log(list)
+        // 出现数据变化但是视图没有变化问题
+        // 原因：reactive 是一个 proxy 代理的对象，不能直接赋值，否则会破坏响应式对象的
+
+        // 解决方案1：数组 可以使用 push 加 解构
+        let res = ['x', 'xx', 'xxx']
+        list.push(...res)
+        console.log(list)
+    }, 1000)
+}
+
+// 解决方案1：添加一个对象，把数组作为一个属性去解决
+let list1 = reactive({ arr: [] })
+const add1 = () => {
+    setTimeout(() => {
+        let res = ['x', 'xx', 'xxx']
+        list1.arr = res
+        console.log(list)
+    }, 1000)
+}
+
+// readonly 拷贝一份proxy对象将其设置为只读
+let obj = reactive({ name: 'ich' })
+const read = readonly(obj)
+const show = () => {
+    // read.name = 'du' // 只读，不可以修改
+    obj.name = 'du' //可以修改，受到原始对象影响
+    console.log(obj, read)
+}
+
+// shallowReactive 只能对浅层的数据 如果是深层的数据只会改变值 不会改变视图
+const obj1 = {
+    a: 1,
+    first: {
+        b: 2,
+        second: {
+            c: 3
+        }
+    }
+}
+const state = shallowReactive(obj1)
+function change1() {
+    state.a = 7
+}
+function change2() {
+    state.first.b = 8
+    state.first.second.c = 9
+    console.log(state)
+}
+</script>
+
+<template>
+    <div>
+        <form>
+            <input v-model="form.name" type="text">
+            <br>
+            <input v-model="form.age" type="text">
+            <br>
+            <button @click.prevent="submit">提交</button>
+        </form>
+    </div>
+    <hr>
+    <div>
+        <ul v-for="item in list">
+            <li>{{ item }}</li>
+        </ul>
+        <button @click="add">添加</button>
+    </div>
+    <hr>
+    <div>
+        <ul v-for="item1 in list1.arr">
+            <li>{{ item1 }}</li>
+        </ul>
+        <button @click="add1">添加</button>
+    </div>
+    <hr>
+    <div>
+        <button @click="show">查看</button>
+    </div>
+    <hr>
+    <div>
+        <div>{{ state }}</div>
+        <button @click="change1">test1</button>
+        <button @click="change2">test2</button>
+    </div>
+</template>
+```
+
+
+
+## ref 和 reactive异同
+
+- `ref`接收内部值（inner value）返回响应式`Ref`对象，`reactive`返回响应式代理对象
+- 从定义上看`ref`通常用于处理单值的响应式，`reactive`用于处理对象类型的数据响应式
+- 两者均是用于构造响应式数据，但是`ref`主要解决原始值的响应式问题
+- ref返回的响应式数据在JS中使用需要加上`.value`才能访问其值，在视图中使用会自动脱ref，不需要`.value`；ref可以接收对象或数组等非原始值，但内部依然是`reactive`实现响应式；reactive内部如果接收Ref对象会自动脱ref；使用展开运算符(...)展开reactive返回的响应式对象会使其失去响应性，可以结合toRefs()将值转换为Ref对象之后再展开。
+- reactive内部使用Proxy代理传入对象并拦截该对象各种操作（trap），从而实现响应式。ref内部封装一个RefImpl类，并设置get value/set value，拦截用户对值的访问，从而实现响应式。
