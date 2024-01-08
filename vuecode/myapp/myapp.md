@@ -1447,6 +1447,24 @@ let vLazy = async (el, binding) => {
 
 
 
+## 自定义指令使用场景？
+
+- Vue有一组默认指令，比如`v-mode`l或`v-for`，同时Vue也允许用户注册自定义指令来扩展Vue能力
+- 自定义指令主要完成一些可复用低层级DOM操作
+- 使用自定义指令分为定义、注册和使用三步：
+  - 定义自定义指令有两种方式：对象和函数形式，前者类似组件定义，有各种生命周期；后者只会在mounted和updated时执行
+  - 注册自定义指令类似组件，可以使用app.directive()全局注册，使用{directives:{xxx}}局部注册
+  - 使用时在注册名称前加上v-即可，比如v-focus
+- 在项目中常用到一些自定义指令，例如：
+  - 复制粘贴 v-copy
+  - 长按 v-longpress
+  - 防抖 v-debounce
+  - 图片懒加载 v-lazy
+  - 按钮权限 v-premission
+  - 页面水印 v-waterMarker
+  - 拖拽指令 v-draggable
+- vue3中指令定义发生了比较大的变化，主要是钩子的名称保持和组件一致，这样开发人员容易记忆，不易犯错。另外在v3.2之后，可以在setup中以一个小写v开头方便的定义自定义指令，更简单了！
+
 # 9. 属性透传
 
 App.vue，爷组件
@@ -1504,6 +1522,8 @@ NavbarChlid.vue，孙组件
     </div>
 </template>
 ```
+
+
 
 
 
@@ -2155,10 +2175,336 @@ function change2() {
 
 
 
-## ref 和 reactive异同
+## ref 和 reactive 异同
 
 - `ref`接收内部值（inner value）返回响应式`Ref`对象，`reactive`返回响应式代理对象
 - 从定义上看`ref`通常用于处理单值的响应式，`reactive`用于处理对象类型的数据响应式
 - 两者均是用于构造响应式数据，但是`ref`主要解决原始值的响应式问题
 - ref返回的响应式数据在JS中使用需要加上`.value`才能访问其值，在视图中使用会自动脱ref，不需要`.value`；ref可以接收对象或数组等非原始值，但内部依然是`reactive`实现响应式；reactive内部如果接收Ref对象会自动脱ref；使用展开运算符(...)展开reactive返回的响应式对象会使其失去响应性，可以结合toRefs()将值转换为Ref对象之后再展开。
 - reactive内部使用Proxy代理传入对象并拦截该对象各种操作（trap），从而实现响应式。ref内部封装一个RefImpl类，并设置get value/set value，拦截用户对值的访问，从而实现响应式。
+
+
+
+# 17. vue3 性能提升体现在哪些方面？
+
+* 代码层面性能优化主要体现在全新响应式API，基于Proxy实现，初始化时间和内存占用均大幅改进
+* 编译层面做了更多编译优化处理，比如静态提升、动态内容标记、事件缓存，区块等，可以有效跳过大量diff过程
+* 打包时更好的支持tree-shaking，因此整体体积更小，加载更快
+
+
+
+# 18. vue3 为什么要用Proxy API替代defineProperty APl ?
+
+* JS中做属性拦截常见的方式有三：`defineProperty`，`getter/setters`和`Proxies`
+* Vue2中使用`defineProperty `的原因是，2013年时只能用这种方式。由于该API存在一些局限性，比如对于数组的拦截有问题，为此vue需要专门为数组响应式做一套实现。另外不能拦截那些新增、删除属性；最后`defineProperty`方案在初始化时需要深度递归遍历待处理的对象才能对它进行完全拦截，明显增加了初始化的时间。
+* 以上两点在`Proxy`出现之后迎刃而解，不仅可以对数组实现拦截，还能对`Map`、`Set`实现拦截；另外`Proxy`的拦截也是懒处理行为，如果用户没有访问嵌套对象，那么也不会实施拦截，这就让初始化的速度和内存占用都改善了。
+* 当然`Proxy`是有兼容性问题的，IE完全不支持，所以如果需要IE兼容就不合适
+
+
+
+# 19. Composition API 与 Options API 有什么不同
+
+* `Composition API`最主要作用是能够简洁、高效复用逻辑。解决了过去`options API`中 mixins`的各种缺点；另外 Composition API`具有更加敏捷的代码组织能力，很多用户喜欢`Options API`，认为所有东西都有固定位置的选项放置代码，但是单个组件增长过大之后这反而成为限制，一个逻辑关注点分散在组件各处，形成代码碎片，维护时需要反复横跳，`Composition API `则可以将它们有效组织在一起。最后`Composition API` 拥有更好的类型推断，对ts支持更友好，`Options API`在设计之初并未考虑类型推断因素，虽然官方为此做了很多复杂的类型体操，确保用户可以在使用`Options API `时获得类型推断，然而还是没办法用在`mixins`和`provide/inject`上。
+* Vue3首推`Composition API` ，但是这会在代码组织上多花点心思，因此在选择上，如果项目属于中低复杂度的场景，`Options API`仍是一个好选择。对于那些大型，高扩展，强维护的项目上，`Composition API`会获得更大收益。
+
+
+
+# 20. 子组件可以直接改变父组件的数据吗？
+
+1. 所有的 prop 都使得其父子之间形成了一个单向下行绑定：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外变更父级组件的状态，从而导致你的应用的数据流向难以理解。另外，每次父级组件发生变更时，子组件中所有的 prop 都将会刷新为最新的值。这意味着你不应该在一个子组件内部改变 prop。如果你这样做了，Vue 会在浏览器控制台中发出警告。
+
+   ```vue
+   const props = defineProps(['foo'])
+   // 下面行为会被警告, props是只读的!
+   props.foo = 'bar'
+   ```
+
+2. 实际开发过程中有两个场景会想要修改一个属性：
+
+- 这个 prop 用来传递一个初始值；这个子组件接下来希望将其作为一个本地的 prop 数据来使用。在这种情况下，最好定义一个本地的 data，并将这个 prop 用作其初始值：
+
+  ```vue
+  const props = defineProps(['initialCounter'])
+  const counter = ref(props.initialCounter)
+  ```
+
+- 这个 prop 以一种原始的值传入且需要进行转换。在这种情况下，最好使用这个 prop 的值来定义一个计算属性：
+
+  ```vue
+  const props = defineProps(['size'])
+  // prop变化，计算属性自动更新
+  const normalizedSize = computed(() => props.size.trim().toLowerCase())
+  ```
+
+3. 实践中如果确实想要改变父组件属性应该emit一个事件让父组件去做这个变更。注意虽然我们不能直接修改一个传入的对象或者数组类型的prop，但是我们还是能够直接改内嵌的对象或属性。
+
+
+
+# 21. 从0到1自己构架一个vue项目，说说有哪些步骤、哪些重要插件、目录结构你会怎么组织
+
+1. 从0创建一个项目大致会做以下事情：项目构建、引入必要插件、代码规范、提交规范、常用库和组件
+2. 目前vue3项目我会用vite或者create-vue创建项目
+3. 接下来引入必要插件：路由插件vue-router、状态管理vuex/pinia、ui库可以选择element-plus和antd-vue、http工具会选axios
+4. 其他比较常用的库有vueuse，nprogress，图标可以使用vite-svg-loader
+5. 下面是代码规范：结合prettier和eslint即可
+6. 最后是提交规范，可以使用husky，lint-staged，commitlint
+
+------
+
+1. 目录结构有如下：
+
+   `.vscode`：用来放项目中的 vscode 配置
+
+   `plugins`：用来放 vite 插件的 plugin 配置
+
+   `public`：用来放一些诸如 页头icon 之类的公共文件，会被打包到dist根目录下
+
+   `src`：用来放项目代码文件
+
+   `api`：用来放http的一些接口配置
+
+   `assets`：用来放一些 CSS 之类的静态资源
+
+   `components`：用来放项目通用组件
+
+   `layout`：用来放项目的布局
+
+   `router`：用来放项目的路由配置
+
+   `store`：用来放状态管理Pinia的配置
+
+   `utils`：用来放项目中的工具方法类
+
+   `views`：用来放项目的页面文件
+
+
+
+# 22. vue 最佳实践有哪些？
+
+从编码风格、性能、安全等方面说几条：
+
+1. 编码风格方面：
+   - 命名组件时使用`多词`风格避免和HTML元素冲突
+   - 使用`细节化`方式定义属性而不是只有一个属性名
+   - 属性名声明时使用`驼峰命名`，模板或`jsx`中使用`肉串命名`
+   - 使用`v-for`时务必加上`key`，且不要跟`v-if`写在一起
+2. 性能方面：
+   - 路由懒加载减少应用尺寸
+   - 利用SSR减少首屏加载时间
+   - 利用v-once渲染那些不需要更新的内容
+   - 一些长列表可以利用虚拟滚动技术避免内存过度占用
+   - 对于深层嵌套对象的大数组可以使用`shallowRef`或`shallowReactive`降低开销
+   - 避免不必要的组件抽象
+
+------
+
+1. 安全：
+   - 不使用不可信模板，例如使用用户输入拼接模板：`template: <div> + userProvidedString + </div>`
+   - 小心使用v-html，:url，:style等，避免html、url、样式等注入
+2. 等等......
+
+
+
+# 23. Vue性能优化方法？
+
+- 主要从Vue代码编写层面说一些优化手段，例如：代码分割、服务端渲染、组件缓存、长列表优化等
+
+- 最常见的路由懒加载：有效拆分App尺寸，访问时才异步加载
+
+  ```js
+  const router = createRouter({
+    routes: [
+      // 借助webpack的import()实现异步组件
+      { path: '/foo', component: () => import('./Foo.vue') }
+    ]
+  })
+  ```
+
+- `keep-alive`缓存页面：避免重复创建组件实例，且能保留缓存组件状态
+
+  ```vue
+  <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component"></component>
+    </keep-alive>
+  </router-view>
+  ```
+
+- 使用`v-show`复用DOM：避免重复创建组件
+
+  ```vue
+  <template>
+    <div class="cell">
+      <!-- 这种情况用v-show复用DOM，比v-if效果好 -->
+      <div v-show="value" class="on">
+        <Heavy :n="10000"/>
+      </div>
+      <section v-show="!value" class="off">
+        <Heavy :n="10000"/>
+      </section>
+    </div>
+  </template>
+  ```
+
+- `v-for` 遍历避免同时使用 `v-if`：实际上在Vue3中已经是个错误写法
+
+  ```vue
+  <template>
+      <ul>
+        <li
+          v-for="user in activeUsers"
+          <!-- 避免同时使用，vue3中会报错 -->
+          <!-- v-if="user.isActive" -->
+          :key="user.id">
+          {{ user.name }}
+        </li>
+      </ul>
+  </template>
+  <script>
+    export default {
+      computed: {
+        activeUsers: function () {
+          return this.users.filter(user => user.isActive)
+        }
+      }
+    }
+  </script>
+  ```
+
+- v-once和v-memo：不再变化的数据使用`v-once`
+
+  ```vue
+  <!-- single element -->
+  <span v-once>This will never change: {{msg}}</span>
+  <!-- the element have children -->
+  <div v-once>
+    <h1>comment</h1>
+    <p>{{msg}}</p>
+  </div>
+  <!-- component -->
+  <my-component v-once :comment="msg"></my-component>
+  <!-- `v-for` directive -->
+  <ul>
+    <li v-for="i in list" v-once>{{i}}</li>
+  </ul>
+  ```
+
+  按条件跳过更新时使用`v-momo`：下面这个列表只会更新选中状态变化项
+
+  ```vue
+  <div v-for="item in list" :key="item.id" v-memo="[item.id === selected]">
+    <p>ID: {{ item.id }} - selected: {{ item.id === selected }}</p>
+    <p>...more child nodes</p>
+  </div>
+  ```
+
+  > https://vuejs.org/api/built-in-directives.html#v-memo
+
+- 长列表性能优化：如果是大数据长列表，可采用虚拟滚动，只渲染少部分区域的内容
+
+  ```html
+  <recycle-scroller
+    class="items"
+    :items="items"
+    :item-size="24"
+  >
+    <template v-slot="{ item }">
+      <FetchItemView
+        :item="item"
+        @vote="voteItem(item)"
+      />
+    </template>
+  </recycle-scroller>
+  ```
+
+  > 一些开源库：
+  >
+  > - [vue-virtual-scroller](https://github.com/Akryum/vue-virtual-scroller)
+  > - [vue-virtual-scroll-grid](https://github.com/rocwang/vue-virtual-scroll-grid)
+
+- 事件的销毁：Vue 组件销毁时，会自动解绑它的全部指令及事件监听器，但是仅限于组件本身的事件。
+
+  ```js
+  export default {
+    created() {
+      this.timer = setInterval(this.refresh, 2000)
+    },
+    beforeUnmount() {
+      clearInterval(this.timer)
+    }
+  }
+  ```
+
+- 图片懒加载
+
+  对于图片过多的页面，为了加速页面加载速度，所以很多时候我们需要将页面内未出现在可视区域内的图片先不做加载， 等到滚动到可视区域后再去加载。
+
+  ```html
+  <img v-lazy="/static/img/1.png">
+  ```
+
+  > 参考项目：[vue-lazyload](https://github.com/hilongjw/vue-lazyload)
+
+- 第三方插件按需引入
+
+  像`element-plus`这样的第三方组件库可以按需引入避免体积太大。
+
+  ```js
+  import { createApp } from 'vue';
+  import { Button, Select } from 'element-plus';
+  
+  const app = createApp()
+  app.use(Button)
+  app.use(Select)
+  ```
+
+- 子组件分割策略：较重的状态组件适合拆分
+
+  ```vue
+  <template>
+    <div>
+      <ChildComp/>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    components: {
+      ChildComp: {
+        methods: {
+          heavy () { /* 耗时任务 */ }
+        },
+        render (h) {
+          return h('div', this.heavy())
+        }
+      }
+    }
+  }
+  </script>
+  ```
+
+  但同时也不宜过度拆分组件，尤其是为了所谓组件抽象将一些不需要渲染的组件特意抽出来，组件实例消耗远大于纯dom节点。
+
+- 服务端渲染/静态网站生成：SSR/SSG；如果SPA应用有首屏渲染慢的问题，可以考虑SSR、SSG方案优化。
+
+
+
+# 24. SPA、SSR的区别是什么
+
+- SPA（Single Page Application）即**单页面应用**。一般也称为 **客户端渲染**（Client Side Render）， 简称 CSR。SSR（Server Side Render）即 **服务端渲染**。一般也称为 **多页面应用**（Mulpile Page Application），简称 MPA。
+- SPA应用只会首次请求html文件，后续只需要请求JSON数据即可，因此用户体验更好，节约流量，服务端压力也较小。但是首屏加载的时间会变长，而且SEO不友好。为了解决以上缺点，就有了SSR方案，由于HTML内容在服务器一次性生成出来，首屏加载快，搜索引擎也可以很方便的抓取页面信息。但同时SSR方案也会有性能，开发受限等问题。
+- 在选择上，如果我们的应用存在首屏加载优化需求，SEO需求时，就可以考虑SSR。
+- 但并不是只有这一种替代方案，比如对一些不常变化的静态网站，SSR反而浪费资源，我们可以考虑[预渲染](https://github.com/chrisvfritz/prerender-spa-plugin)（prerender）方案。另外nuxt.js/next.js中给我们提供了SSG（Static Site Generate）静态网站生成方案也是很好的静态站点解决方案，结合一些CI手段，可以起到很好的优化效果，且能节约服务器资源。
+
+
+
+# 25. 使用vue渲染大量数据时应该怎么优化？
+
+- 在大型企业级项目中经常需要渲染大量数据，此时很容易出现卡顿的情况。比如大数据量的表格、树。
+- 处理时要根据情况做不通处理：
+  - 可以采取分页的方式获取，避免渲染大量数据
+  - [vue-virtual-scroller](https://github.com/Akryum/vue-virtual-scroller)等虚拟滚动方案，只渲染视口范围内的数据
+  - 如果不需要更新，可以使用`v-once`方式只渲染一次
+  - 通过[v-memo](https://vuejs.org/api/built-in-directives.html#v-memo)可以缓存结果，结合`v-for`使用，避免数据变化时不必要的VNode创建
+  - 可以采用懒加载方式，在用户需要的时候再加载数据，比如tree组件子树的懒加载
+- 总之，还是要看具体需求，首先从设计上避免大数据获取和渲染；实在需要这样做可以采用虚表的方式优化渲染；最后优化更新，如果不需要更新可以v-once处理，需要更新可以v-memo进一步优化大数据更新性能。其他可以采用的是交互方式优化，无线滚动、懒加载等方案。
